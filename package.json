@@ -7,21 +7,20 @@
     "node": "14.x"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --respawn --transpile-only --exit-child ./src/"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@fullstacksjs/eslint-config": "^6.2.0",
-    "@types/chai": "^4.2.19",
-    "@types/mocha": "^8.2.2",
-    "chai": "^4.3.4",
-    "eslint": "^7.29.0",
-    "mocha": "^9.0.1",
-    "nodemon": "^2.0.7",
-    "prettier": "^2.3.1",
-    "typescript": "^4.3.4",
-    "cspell": "^5.6.6"
-  },
-  "dependencies": {}
+    "@fullstacksjs/eslint-config": "6.2.0",
+    "@types/chai": "4.2.19",
+    "@types/mocha": "8.2.2",
+    "chai": "4.3.4",
+    "cspell": "5.6.6",
+    "eslint": "7.29.0",
+    "mocha": "9.0.1",
+    "prettier": "2.3.1",
+    "ts-node-dev": "1.1.6",
+    "typescript": "4.3.4"
+  }
 }
