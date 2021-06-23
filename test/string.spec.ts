@@ -55,7 +55,7 @@ describe('json decoder for strings', () => {
     );
     done();
   });
-  it('should fail when given nested non string fields', done => {
+  it('should fail when given not including nested string fields', done => {
     const data = { x: { y: 'why??????' } };
     const decode = createDecoder({
       x: { y: { z: { w: V.string() } } },

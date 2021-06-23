@@ -48,7 +48,7 @@ describe('json decoder for numbers', () => {
     expect(decode(data)).to.be.eq(data);
     done();
   });
-  it('should fail when given nested non string fields', done => {
+  it('should fail when given nested non number fields', done => {
     const data = { x: { y: { z: { w: false } } } };
     const decode = createDecoder({
       x: { y: { z: { w: V.number() } } },
@@ -58,7 +58,7 @@ describe('json decoder for numbers', () => {
     );
     done();
   });
-  it('should fail when given nested non string fields', done => {
+  it('should fail when given not including nested number fields', done => {
     const data = { x: { y: 'why??????' } };
     const decode = createDecoder({
       x: { y: { z: { w: V.number() } } },
