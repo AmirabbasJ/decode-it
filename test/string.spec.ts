@@ -30,10 +30,38 @@ describe('json decoder for strings', () => {
     done();
   });
   it('should throw when not including required fields', done => {
-    const data = { name: 'nick' };
+    const data = { name: 'Nick' };
     const decode = createDecoder({ name: V.string(), country: V.string() });
     expect(() => decode(data)).to.throw(
       `Expected string but got undefined at country`,
+    );
+    done();
+  });
+  it('should pass when given same nested string fields', done => {
+    const data = { x: { y: { z: { w: 'this is w' } } } };
+    const decode = createDecoder({
+      x: { y: { z: { w: V.string() } } },
+    });
+    expect(decode(data)).to.be.eq(data);
+    done();
+  });
+  it('should fail when given nested non string fields', done => {
+    const data = { x: { y: { z: { w: false } } } };
+    const decode = createDecoder({
+      x: { y: { z: { w: V.string() } } },
+    });
+    expect(() => decode(data)).to.throw(
+      `Expected string but got ${data.x.y.z.w} at x.y.z.w`,
+    );
+    done();
+  });
+  it('should fail when given nested non string fields', done => {
+    const data = { x: { y: 'why??????' } };
+    const decode = createDecoder({
+      x: { y: { z: { w: V.string() } } },
+    });
+    expect(() => decode(data)).to.throw(
+      `Expected object but got ${data.x.y} at x.y`,
     );
     done();
   });
