@@ -1,8 +1,8 @@
-import { isNumber, isString } from './typeCheckers';
+import { isBoolean, isNumber, isString } from './typeCheckers';
 
 export interface validationResult {
   value: unknown;
-  type: 'number' | 'string';
+  type: 'boolean' | 'number' | 'string';
   state: 'failed' | 'success';
 }
 
@@ -18,4 +18,10 @@ export const number = (): validator => arg => ({
   value: arg,
   type: 'number',
   state: isNumber(arg) ? 'success' : 'failed',
+});
+
+export const boolean = (): validator => arg => ({
+  value: arg,
+  type: 'boolean',
+  state: isBoolean(arg) ? 'success' : 'failed',
 });
