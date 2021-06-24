@@ -1,5 +1,5 @@
-import { isObject } from '../brainStorms/utils';
 import { formatFailedDecode } from './errorFormatter';
+import { isObject } from './typeCheckers';
 import type { FailedValidation, validator } from './validators';
 
 export interface Schema {
