@@ -11,7 +11,7 @@
     "prepare": "husky install"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@fullstacksjs/eslint-config": "6.2.0",
     "@types/chai": "4.2.19",
