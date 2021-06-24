@@ -1,5 +1,6 @@
 import { isObject } from '../brainStorms/utils';
-import { validationResult, validator } from './validators';
+import { formatFailedDecode } from './errorFormatter';
+import type { FailedValidation, validator } from './validators';
 
 export interface Schema {
   [key: string]: Schema | validator;
@@ -9,8 +10,9 @@ export type Json = Record<string, unknown>;
 
 export interface FailedDecode {
   actual: unknown;
-  expected: validationResult['type'] | 'object';
+  expected: FailedValidation['type'];
   path: string;
+  wrapper?: FailedValidation['wrapper'];
 }
 
 class DecodeError extends Error {
@@ -26,7 +28,7 @@ const concatNestedErrors = (errorsSources: FailedDecode[], currentKey: string) =
     path: `${currentKey}.${errorSource.path}`,
   }));
 
-const getFailedDecodes = (schema: Schema, json: Json): FailedDecode[] => {
+export const getFailedDecodes = (schema: Schema, json: Json): FailedDecode[] => {
   return Object.entries(schema).reduce((errors: FailedDecode[], [key, validate]) => {
     const field = json[key];
 
@@ -47,7 +49,8 @@ const getFailedDecodes = (schema: Schema, json: Json): FailedDecode[] => {
       return errors.concat({
         actual: result.value,
         expected: result.type,
-        path: key,
+        wrapper: result.wrapper,
+        path: result.path ? `${key}${result.path}` : key,
       });
 
     return errors;
@@ -58,8 +61,9 @@ export const createDecoder =
   (schema: Schema) =>
   <T extends Json>(json: T): T | never => {
     const failedDecodes = getFailedDecodes(schema, json);
-    failedDecodes.forEach(({ actual, expected, path }) => {
-      throw new DecodeError(`Expected ${expected} but got ${actual} at ${path}`);
+    const formattedErrors = failedDecodes.map(err => formatFailedDecode(err));
+    formattedErrors.forEach(msg => {
+      throw new DecodeError(msg);
     });
     return json;
   };
