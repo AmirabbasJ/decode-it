@@ -13,7 +13,7 @@ export interface FailedValidation {
   value: unknown;
   type: 'boolean' | 'none' | 'null' | 'number' | 'object' | 'string' | 'unknown';
   state: 'failed';
-  wrapper?: 'array' | 'union';
+  wrapper?: 'array' | 'tuple' | 'union';
   path?: string;
 }
 
@@ -23,9 +23,9 @@ interface passedValidation {
 const passedValidation: passedValidation = { state: 'passed' };
 // TODO: \/
 // export const createFailedValidation = (value,type,wrapper,path) => ({value,type,wrapper,path})
-export type validationResult = FailedValidation | passedValidation;
+export type ValidationResult = FailedValidation | passedValidation;
 
-export type validator = (arg: unknown) => validationResult;
+export type validator = (arg: unknown) => ValidationResult;
 
 export const string = (): validator => arg =>
   isString(arg)
@@ -162,4 +162,67 @@ export const union =
           wrapper: 'union',
         }
       : passedValidation;
+  };
+
+export const tuple =
+  (...itemValidators: (Schema | validator)[]): validator =>
+  (arg: unknown) => {
+    if (isEmptyArray(itemValidators))
+      return {
+        value: arg,
+        type: 'unknown',
+        state: 'failed',
+        wrapper: 'tuple',
+      };
+    if (!isArray(arg))
+      return {
+        value: arg,
+        type: 'unknown',
+        state: 'failed',
+        wrapper: 'array',
+      };
+    const validationResults: ValidationResult[] = arg.map((item, index) => {
+      const validate = itemValidators[index];
+      if (isObject(validate)) {
+        const [itemFailedDecode] = getFailedDecodes(
+          validate,
+          item as Record<string, unknown>,
+        );
+        return itemFailedDecode == null
+          ? passedValidation
+          : {
+              ...itemFailedDecode,
+              value: itemFailedDecode.actual,
+              type: itemFailedDecode.expected,
+              state: 'failed',
+            };
+      }
+
+      return validate(item);
+    });
+    const allValidationsPassed = validationResults.every(v => v.state === 'passed');
+    if (allValidationsPassed) return passedValidation;
+    console.log(validationResults);
+
+    const [failedDecode] = validationResults.reduce(
+      (failedDecodes: FailedValidation[], validationRes, index) => {
+        const currentPath = `[${index}]`;
+        if (validationRes.state === 'failed') {
+          const innerPath = validationRes?.path;
+          return failedDecodes.concat({
+            ...validationRes,
+            path: innerPath != null ? `${currentPath}.${innerPath}` : currentPath,
+          });
+        }
+        return failedDecodes;
+      },
+      [],
+    );
+    return {
+      value: failedDecode.value,
+      type: failedDecode.type,
+      path: failedDecode.path,
+      state: 'failed',
+      wrapper: 'tuple',
+    };
   };

@@ -22,6 +22,15 @@ export const formatFailedDecode = ({
       '  field: V.union(V.string(), V.number()) // string or number\n' +
       '}'
     );
+  if (wrapper === 'tuple' && expected === 'unknown')
+    return (
+      'Expected tuples to have two or more validators\n' +
+      'hint: you passed V.tuples with no validators\n' +
+      'you should pass at least one validators e.g:\n' +
+      '{\n' +
+      '  field: V.tuples(V.string(), V.number()) // [string, number]\n' +
+      '}'
+    );
   if (wrapper === 'union')
     return `Expected union to match one of specified types but none matched for value ${actual} at ${path}`;
   return `Expected ${expected} but got ${actual} at ${path}`;
