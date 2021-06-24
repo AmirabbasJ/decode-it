@@ -13,14 +13,14 @@ export interface FailedValidation {
   value: unknown;
   type: 'boolean' | 'none' | 'null' | 'number' | 'object' | 'string' | 'unknown';
   state: 'failed';
-  wrapper?: 'array';
+  wrapper?: 'array' | 'union';
   path?: string;
 }
 
-export interface passedValidation {
+interface passedValidation {
   state: 'passed';
 }
-export const passedValidation: passedValidation = { state: 'passed' };
+const passedValidation: passedValidation = { state: 'passed' };
 // TODO: \/
 // export const createFailedValidation = (value,type,wrapper,path) => ({value,type,wrapper,path})
 export type validationResult = FailedValidation | passedValidation;
@@ -138,4 +138,28 @@ export const array =
           wrapper: itemsFailedResults[0]?.wrapper == null ? undefined : 'array',
           path: itemsFailedResults[0]?.path,
         };
+  };
+
+export const union =
+  (...itemValidators: validator[]): validator =>
+  (arg: unknown) => {
+    if (isEmptyArray(itemValidators) || itemValidators.length === 1) {
+      return {
+        value: arg,
+        type: 'unknown',
+        state: 'failed',
+        wrapper: 'union',
+      };
+    }
+    const validationsResult = itemValidators.map(validate => validate(arg));
+
+    const allValidationsFailed = validationsResult.every(v => v.state === 'failed');
+    return allValidationsFailed
+      ? {
+          value: arg,
+          type: 'none',
+          state: 'failed',
+          wrapper: 'union',
+        }
+      : passedValidation;
   };
