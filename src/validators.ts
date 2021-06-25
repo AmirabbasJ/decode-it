@@ -108,6 +108,7 @@ export const array =
               type: failedDecode.expected,
               state: 'failed',
               path: `[${index}].${failedDecode?.path}`,
+              wrapper: failedDecode.wrapper,
             });
           return failedResults;
         },
