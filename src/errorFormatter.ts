@@ -24,7 +24,7 @@ export const formatFailedDecode = ({
     );
   if (wrapper === 'tuple' && expected === 'unknown')
     return (
-      'Expected tuples to have two or more validators\n' +
+      'Expected tuples to have at least one validators\n' +
       'hint: you passed V.tuples with no validators\n' +
       'you should pass at least one validators e.g:\n' +
       '{\n' +
