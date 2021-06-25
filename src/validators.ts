@@ -26,9 +26,9 @@ const passedValidation: passedValidation = { state: 'passed' };
 // export const createFailedValidation = (value,type,wrapper,path) => ({value,type,wrapper,path})
 export type ValidationResult = FailedValidation | passedValidation;
 
-export type validator = (arg: unknown) => ValidationResult;
+export type Validator = (arg: unknown) => ValidationResult;
 
-export const string = (): validator => arg =>
+export const string = (): Validator => arg =>
   isString(arg)
     ? passedValidation
     : {
@@ -37,7 +37,7 @@ export const string = (): validator => arg =>
         type: 'string',
       };
 
-export const number = (): validator => arg =>
+export const number = (): Validator => arg =>
   isNumber(arg)
     ? passedValidation
     : {
@@ -46,7 +46,7 @@ export const number = (): validator => arg =>
         state: 'failed',
       };
 
-export const boolean = (): validator => arg =>
+export const boolean = (): Validator => arg =>
   isBoolean(arg)
     ? passedValidation
     : {
@@ -55,7 +55,7 @@ export const boolean = (): validator => arg =>
         state: 'failed',
       };
 
-export const nil = (): validator => arg =>
+export const nil = (): Validator => arg =>
   isNull(arg)
     ? passedValidation
     : {
@@ -65,7 +65,7 @@ export const nil = (): validator => arg =>
       };
 
 export const array =
-  (itemValidator?: Schema | validator): validator =>
+  (itemValidator?: Schema | Validator): Validator =>
   (arg: unknown) => {
     if (!isArray(arg))
       return {
@@ -143,7 +143,7 @@ export const array =
   };
 
 export const union =
-  (...itemValidators: validator[]): validator =>
+  (...itemValidators: Validator[]): Validator =>
   (arg: unknown) => {
     if (isEmptyArray(itemValidators) || itemValidators.length === 1) {
       return {
@@ -167,7 +167,7 @@ export const union =
   };
 
 export const tuple =
-  (...itemValidators: (Schema | validator)[]): validator =>
+  (...itemValidators: (Schema | Validator)[]): Validator =>
   (arg: unknown) => {
     if (isEmptyArray(itemValidators))
       return {
@@ -229,7 +229,7 @@ export const tuple =
     };
   };
 export const optional =
-  (validator: Schema | validator): validator =>
+  (validator: Schema | Validator): Validator =>
   (arg: unknown) => {
     if (isUndefined(arg)) return passedValidation;
     if (isObject(validator)) {

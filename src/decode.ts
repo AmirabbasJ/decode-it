@@ -1,9 +1,9 @@
 import { formatFailedDecode } from './errorFormatter';
 import { isObject } from './typeCheckers';
-import type { FailedValidation, validator } from './validators';
+import type { FailedValidation, Validator } from './validators';
 
 export interface Schema {
-  [key: string]: Schema | validator;
+  [key: string]: Schema | Validator;
 }
 
 export type Json = Record<string, unknown>;
