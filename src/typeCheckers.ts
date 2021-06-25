@@ -9,3 +9,4 @@ export const isNull = (arg: unknown): arg is null => arg === null;
 export const isArray = (arg: unknown): arg is unknown[] => Array.isArray(arg);
 export const isEmptyArray = <T>(arg: T[]): arg is NonEmptyArray<T> =>
   arg.length === 0;
+export const isUndefined = (arg: unknown): arg is undefined => arg === undefined;

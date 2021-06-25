@@ -33,5 +33,10 @@ export const formatFailedDecode = ({
     );
   if (wrapper === 'union')
     return `Expected union to match one of specified types but none matched for value ${actual} at ${path}`;
+  if (wrapper === 'optional' && expected === 'object')
+    return `Expected undefined or specified schema but got ${actual} at ${path}`;
+  if (wrapper === 'optional')
+    return `Expected undefined or ${expected} but got ${actual} at ${path}`;
+
   return `Expected ${expected} but got ${actual} at ${path}`;
 };

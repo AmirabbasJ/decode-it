@@ -7,13 +7,14 @@ import {
   isNumber,
   isObject,
   isString,
+  isUndefined,
 } from './typeCheckers';
 
 export interface FailedValidation {
   value: unknown;
   type: 'boolean' | 'none' | 'null' | 'number' | 'object' | 'string' | 'unknown';
   state: 'failed';
-  wrapper?: 'array' | 'tuple' | 'union';
+  wrapper?: 'array' | 'optional' | 'tuple' | 'union';
   path?: string;
 }
 
@@ -225,4 +226,26 @@ export const tuple =
       state: 'failed',
       wrapper: 'tuple',
     };
+  };
+export const optional =
+  (validator: Schema | validator): validator =>
+  (arg: unknown) => {
+    if (isUndefined(arg)) return passedValidation;
+    if (isObject(validator)) {
+      if (!isObject(arg))
+        return { value: arg, type: 'object', state: 'failed', wrapper: 'optional' };
+      const [failedDecode] = getFailedDecodes(validator, arg);
+      console.log(failedDecode);
+
+      if (!failedDecode) return passedValidation;
+      return {
+        value: failedDecode.actual,
+        type: 'object',
+        state: 'failed',
+        wrapper: 'optional',
+      };
+    }
+
+    const result = validator(arg);
+    return { ...result, wrapper: 'optional' };
   };
