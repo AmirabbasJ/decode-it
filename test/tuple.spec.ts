@@ -31,6 +31,12 @@ describe('json decoder for tuples', () => {
     expect(decode(data)).to.be.eq(data);
     done();
   });
+  it('should pass when given one validators of same value type', done => {
+    const data = { tick: ['10/2/1991'] };
+    const decode = createDecoder({ tick: V.tuple(V.string()) });
+    expect(decode(data)).to.be.eq(data);
+    done();
+  });
   it('should fail when given schemas as validators of different value type', done => {
     const data = { tick: ['10/2/1991', 1000] };
     const decode = createDecoder({ tick: V.tuple(V.string(), V.boolean()) });
