@@ -6,6 +6,19 @@ export const formatFailedDecode = ({
   path,
   wrapper,
 }: FailedDecode): string => {
+  if (expected === 'validator')
+    return (
+      `Expected schema fields to be an validator or another schema but got non validator function at ${path}\n` +
+      `hint: it is possible that you forgot to call the validator e.g this is wrong:\n` +
+      `{\n` +
+      `  field: V.string\n` +
+      `}\n` +
+      `the right way is this:\n` +
+      `{\n` +
+      `  field: V.string()\n` +
+      `}\n` +
+      `so as a rule of thumb: "you are always calling the validator"`
+    );
   if (wrapper === 'array' && expected === 'none')
     return `Expected empty array but got ${actual} at ${path}`;
   if (wrapper === 'array') {

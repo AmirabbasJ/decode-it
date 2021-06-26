@@ -10,3 +10,5 @@ export const isArray = (arg: unknown): arg is unknown[] => Array.isArray(arg);
 export const isEmptyArray = <T>(arg: T[]): arg is NonEmptyArray<T> =>
   arg.length === 0;
 export const isUndefined = (arg: unknown): arg is undefined => arg === undefined;
+export const isFunction = (arg: unknown): arg is (...args: unknown[]) => unknown =>
+  typeof arg === 'function';

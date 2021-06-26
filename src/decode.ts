@@ -1,5 +1,6 @@
 import { formatFailedDecode } from './errorFormatter';
-import { isObject } from './typeCheckers';
+import { isFunction, isObject, isUndefined } from './typeCheckers';
+import { flatObject } from './utils';
 import type { FailedValidation, Validator } from './validators';
 
 export interface Schema {
@@ -22,6 +23,12 @@ class DecodeError extends Error {
   }
 }
 
+const isValidationResult = (arg: unknown) => {
+  if (!isObject(arg)) return false;
+  if (arg.state !== 'failed' && arg.state !== 'passed') return false;
+  return true;
+};
+
 const concatNestedErrors = (errorsSources: FailedDecode[], currentKey: string) =>
   errorsSources.map(errorSource => ({
     ...errorSource,
@@ -31,7 +38,7 @@ const concatNestedErrors = (errorsSources: FailedDecode[], currentKey: string) =
 export const getFailedDecodes = (schema: Schema, json: Json): FailedDecode[] => {
   return Object.entries(schema).reduce((errors: FailedDecode[], [key, validate]) => {
     const field = json[key];
-
+    console.log(validate);
     if (isObject(validate)) {
       if (!isObject(field))
         return errors.concat({
@@ -45,6 +52,14 @@ export const getFailedDecodes = (schema: Schema, json: Json): FailedDecode[] => 
       return errors.concat(error);
     }
     const result = validate(field);
+    console.log(result);
+
+    if (!isValidationResult(result))
+      return errors.concat({
+        actual: result,
+        expected: 'validator',
+        path: key,
+      });
     if (result.state === 'failed')
       return errors.concat({
         actual: result.value,
@@ -57,9 +72,20 @@ export const getFailedDecodes = (schema: Schema, json: Json): FailedDecode[] => 
   }, []);
 };
 
-export const createDecoder =
-  (schema: Schema) =>
-  <T extends Json>(json: T): T | never => {
+export const createDecoder = (schema: Schema) => {
+  if (!isObject(schema))
+    throw new DecodeError(`Expected schema to be an object but got ${schema}`);
+  const nonFunctionField = flatObject(schema).find(
+    ([_k, v]: [string, unknown]) => !isFunction(v),
+  );
+  if (!isUndefined(nonFunctionField))
+    throw new DecodeError(
+      `Expected schema fields to be an validator or another schema but got ${nonFunctionField[1]} at ${nonFunctionField[0]}`,
+    );
+  return <T extends Json>(json: T): T | never => {
+    if (!isObject(json))
+      throw new DecodeError(`Expected json to be an object but got ${json}`);
+
     const failedDecodes = getFailedDecodes(schema, json);
     const formattedErrors = failedDecodes.map(err => formatFailedDecode(err));
     formattedErrors.forEach(msg => {
@@ -67,3 +93,4 @@ export const createDecoder =
     });
     return json;
   };
+};

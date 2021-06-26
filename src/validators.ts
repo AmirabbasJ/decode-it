@@ -12,7 +12,15 @@ import {
 
 export interface FailedValidation {
   value: unknown;
-  type: 'boolean' | 'none' | 'null' | 'number' | 'object' | 'string' | 'unknown';
+  type:
+    | 'boolean'
+    | 'none'
+    | 'null'
+    | 'number'
+    | 'object'
+    | 'string'
+    | 'unknown'
+    | 'validator';
   state: 'failed';
   wrapper?: 'array' | 'optional' | 'tuple' | 'union';
   path?: string;
@@ -204,7 +212,6 @@ export const tuple =
     });
     const allValidationsPassed = validationResults.every(v => v.state === 'passed');
     if (allValidationsPassed) return passedValidation;
-    console.log(validationResults);
 
     const [failedDecode] = validationResults.reduce(
       (failedDecodes: FailedValidation[], validationRes, index) => {
@@ -236,7 +243,6 @@ export const optional =
       if (!isObject(arg))
         return { value: arg, type: 'object', state: 'failed', wrapper: 'optional' };
       const [failedDecode] = getFailedDecodes(validator, arg);
-      console.log(failedDecode);
 
       if (!failedDecode) return passedValidation;
       return {
