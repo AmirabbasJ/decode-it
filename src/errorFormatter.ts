@@ -1,5 +1,6 @@
 import type { FailedDecode } from './decode';
 
+// eslint-disable-next-line complexity
 export const formatFailedDecode = ({
   actual,
   expected,
@@ -50,6 +51,17 @@ export const formatFailedDecode = ({
     return `Expected undefined or specified schema but got ${actual} at ${path}`;
   if (wrapper === 'optional')
     return `Expected undefined or ${expected} but got ${actual} at ${path}`;
+  if (wrapper === 'literal' && expected === 'object')
+    return (
+      'Expected literal to have at least one validators\n' +
+      'hint: you passed V.literal with no validators\n' +
+      'you should pass at least one validators e.g:\n' +
+      '{\n' +
+      "  field: V.literal('wow') // wow\n" +
+      '}'
+    );
 
+  if (wrapper === 'literal')
+    return `Expected literal ${expected} but got ${actual} at ${path}`;
   return `Expected ${expected} but got ${actual} at ${path}`;
 };

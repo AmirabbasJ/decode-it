@@ -9,10 +9,12 @@ import {
   isString,
   isUndefined,
 } from './typeCheckers';
+import { deepEq } from './utils';
 
 export interface FailedValidation {
   value: unknown;
   type:
+    | string
     | 'boolean'
     | 'none'
     | 'null'
@@ -22,7 +24,7 @@ export interface FailedValidation {
     | 'unknown'
     | 'validator';
   state: 'failed';
-  wrapper?: 'array' | 'optional' | 'tuple' | 'union';
+  wrapper?: 'array' | 'literal' | 'optional' | 'tuple' | 'union';
   path?: string;
 }
 
@@ -255,4 +257,35 @@ export const optional =
 
     const result = validator(arg);
     return { ...result, wrapper: 'optional' };
+  };
+
+export const literal =
+  (val: unknown): Validator =>
+  (arg: unknown) => {
+    if (isUndefined(val))
+      return {
+        value: arg,
+        type: 'object',
+        state: 'failed',
+        wrapper: 'literal',
+      };
+    if (isArray(val) || isObject(val)) {
+      const areEqual = deepEq(val, arg);
+      return areEqual
+        ? passedValidation
+        : {
+            value: JSON.stringify(arg),
+            type: JSON.stringify(val),
+            state: 'failed',
+            wrapper: 'literal',
+          };
+    }
+    if (val !== arg)
+      return {
+        value: arg,
+        type: JSON.stringify(val),
+        state: 'failed',
+        wrapper: 'literal',
+      };
+    return passedValidation;
   };
