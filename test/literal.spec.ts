@@ -4,20 +4,12 @@ import { createDecoder } from '../src/decode';
 import * as V from '../src/validators';
 
 describe('json decoder for literals', () => {
-  it('should fail when given literal with no parameter', done => {
-    const data = { email: 'shit@wow.com' };
+  it('should pass when given literal with no parameter and undefined', done => {
+    const data = {};
     const decode = createDecoder({
       email: V.literal(undefined),
     });
-    expect(() => decode(data)).to.throw(
-      'Expected literal to have at least one validators\n' +
-        'hint: you passed V.literal with no validators\n' +
-        'you should pass at least one validators e.g:\n' +
-        '{\n' +
-        "  field: V.literal('wow') // wow\n" +
-        '}',
-    );
-    done();
+    expect(() => decode(data)).to.be.eq(data);
   });
   it('should pass when given literal with same value as parameter', done => {
     const data = { email: 'shit@wow.com' };

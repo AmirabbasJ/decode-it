@@ -14,8 +14,8 @@ import { deepEq } from './utils';
 export interface FailedValidation {
   value: unknown;
   type:
-    | string
     | 'boolean'
+    | 'literal'
     | 'none'
     | 'null'
     | 'number'
@@ -24,8 +24,9 @@ export interface FailedValidation {
     | 'unknown'
     | 'validator';
   state: 'failed';
-  wrapper?: 'array' | 'literal' | 'optional' | 'tuple' | 'union';
+  wrapper?: 'array' | 'optional' | 'tuple' | 'union';
   path?: string;
+  literal?: unknown;
 }
 
 interface passedValidation {
@@ -115,7 +116,7 @@ export const array =
           if (failedDecode != null)
             return failedResults.concat({
               value: failedDecode.actual,
-              type: failedDecode.expected,
+              type: failedDecode.expectedType,
               state: 'failed',
               path: `[${index}].${failedDecode?.path}`,
               wrapper: failedDecode.wrapper,
@@ -205,7 +206,7 @@ export const tuple =
           : {
               ...itemFailedDecode,
               value: itemFailedDecode.actual,
-              type: itemFailedDecode.expected,
+              type: itemFailedDecode.expectedType,
               state: 'failed',
             };
       }
@@ -262,30 +263,23 @@ export const optional =
 export const literal =
   (val: unknown): Validator =>
   (arg: unknown) => {
-    if (isUndefined(val))
-      return {
-        value: arg,
-        type: 'object',
-        state: 'failed',
-        wrapper: 'literal',
-      };
     if (isArray(val) || isObject(val)) {
       const areEqual = deepEq(val, arg);
       return areEqual
         ? passedValidation
         : {
-            value: JSON.stringify(arg),
-            type: JSON.stringify(val),
+            value: arg,
+            type: 'literal',
             state: 'failed',
-            wrapper: 'literal',
+            literal: val,
           };
     }
     if (val !== arg)
       return {
         value: arg,
-        type: JSON.stringify(val),
+        type: 'literal',
         state: 'failed',
-        wrapper: 'literal',
+        literal: val,
       };
     return passedValidation;
   };

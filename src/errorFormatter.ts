@@ -1,13 +1,18 @@
 import type { FailedDecode } from './decode';
 
+export const formatToJson = (v: unknown) => JSON.stringify(v, null, 1);
+
 // eslint-disable-next-line complexity
 export const formatFailedDecode = ({
   actual,
-  expected,
+  expectedType,
   path,
   wrapper,
+  expectedValue,
 }: FailedDecode): string => {
-  if (expected === 'validator')
+  const formattedActual = formatToJson(actual);
+  const formattedExpectedValue = formatToJson(expectedValue);
+  if (expectedType === 'validator')
     return (
       `Expected schema fields to be an validator or another schema but got non validator function at ${path}\n` +
       `hint: it is possible that you forgot to call the validator e.g this is wrong:\n` +
@@ -20,14 +25,14 @@ export const formatFailedDecode = ({
       `}\n` +
       `so as a rule of thumb: "you are always calling the validator"`
     );
-  if (wrapper === 'array' && expected === 'none')
-    return `Expected empty array but got ${actual} at ${path}`;
+  if (wrapper === 'array' && expectedType === 'none')
+    return `Expected empty array but got ${formattedActual} at ${path}`;
   if (wrapper === 'array') {
-    return expected === 'unknown'
-      ? `Expected array but got ${actual} at ${path}`
-      : `Expected array of ${expected} but got ${actual} at ${path}`;
+    return expectedType === 'unknown'
+      ? `Expected array but got ${formattedActual} at ${path}`
+      : `Expected array of ${expectedType} but got ${formattedActual} at ${path}`;
   }
-  if (wrapper === 'union' && expected === 'unknown')
+  if (wrapper === 'union' && expectedType === 'unknown')
     return (
       'Expected union to have two or more validators\n' +
       'hint: you passed V.union with less than two validators to choose from\n' +
@@ -36,7 +41,7 @@ export const formatFailedDecode = ({
       '  field: V.union(V.string(), V.number()) // string or number\n' +
       '}'
     );
-  if (wrapper === 'tuple' && expected === 'unknown')
+  if (wrapper === 'tuple' && expectedType === 'unknown')
     return (
       'Expected tuples to have at least one validators\n' +
       'hint: you passed V.tuples with no validators\n' +
@@ -46,22 +51,12 @@ export const formatFailedDecode = ({
       '}'
     );
   if (wrapper === 'union')
-    return `Expected union to match one of specified types but none matched for value ${actual} at ${path}`;
-  if (wrapper === 'optional' && expected === 'object')
-    return `Expected undefined or specified schema but got ${actual} at ${path}`;
+    return `Expected union to match one of specified types but none matched for value ${formattedActual} at ${path}`;
+  if (wrapper === 'optional' && expectedType === 'object')
+    return `Expected undefined or specified schema but got ${formattedActual} at ${path}`;
   if (wrapper === 'optional')
-    return `Expected undefined or ${expected} but got ${actual} at ${path}`;
-  if (wrapper === 'literal' && expected === 'object')
-    return (
-      'Expected literal to have at least one validators\n' +
-      'hint: you passed V.literal with no validators\n' +
-      'you should pass at least one validators e.g:\n' +
-      '{\n' +
-      "  field: V.literal('wow') // wow\n" +
-      '}'
-    );
-
-  if (wrapper === 'literal')
-    return `Expected literal ${expected} but got ${actual} at ${path}`;
-  return `Expected ${expected} but got ${actual} at ${path}`;
+    return `Expected undefined or ${expectedType} but got ${formattedActual} at ${path}`;
+  return `Expected ${
+    expectedType ?? formattedExpectedValue
+  } but got ${formattedActual} at ${path}`;
 };

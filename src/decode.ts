@@ -11,7 +11,8 @@ export type Json = Record<string, unknown>;
 
 export interface FailedDecode {
   actual: unknown;
-  expected: FailedValidation['type'];
+  expectedType: FailedValidation['type'];
+  expectedValue?: FailedValidation['literal'];
   path: string;
   wrapper?: FailedValidation['wrapper'];
 }
@@ -38,12 +39,11 @@ const concatNestedErrors = (errorsSources: FailedDecode[], currentKey: string) =
 export const getFailedDecodes = (schema: Schema, json: Json): FailedDecode[] => {
   return Object.entries(schema).reduce((errors: FailedDecode[], [key, validate]) => {
     const field = json[key];
-    console.log(validate);
     if (isObject(validate)) {
       if (!isObject(field))
         return errors.concat({
           actual: field,
-          expected: 'object',
+          expectedType: 'object',
           path: key,
         });
 
@@ -52,18 +52,18 @@ export const getFailedDecodes = (schema: Schema, json: Json): FailedDecode[] => 
       return errors.concat(error);
     }
     const result = validate(field);
-    console.log(result);
 
     if (!isValidationResult(result))
       return errors.concat({
         actual: result,
-        expected: 'validator',
+        expectedType: 'validator',
         path: key,
       });
     if (result.state === 'failed')
       return errors.concat({
         actual: result.value,
-        expected: result.type,
+        expectedType: result.type,
+        expectedValue: result.literal,
         wrapper: result.wrapper,
         path: result.path ? `${key}${result.path}` : key,
       });
