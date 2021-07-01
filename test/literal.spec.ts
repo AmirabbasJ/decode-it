@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for literals', () => {
@@ -9,7 +10,8 @@ describe('json decoder for literals', () => {
     const decode = createDecoder({
       email: V.literal(undefined),
     });
-    expect(() => decode(data)).to.be.eq(data);
+    expect(decode(data)).to.be.eq(data);
+    done();
   });
   it('should pass when given literal with same value as parameter', done => {
     const data = { email: 'shit@wow.com' };
@@ -25,7 +27,7 @@ describe('json decoder for literals', () => {
       email: V.literal('notshit@wow.com'),
     });
     expect(() => decode(data)).to.throw(
-      `Expected literal "notshit@wow.com" but got ${data.email} at email`,
+      `Expected "notshit@wow.com" but got ${formatToJson(data.email)} at email`,
     );
     done();
   });
@@ -51,7 +53,9 @@ describe('json decoder for literals', () => {
       items: V.literal([{ x: { y: { a: [1, 2, 3, 4] } } }]),
     });
     expect(() => decode(data)).to.throw(
-      `Expected literal [{"x":{"y":{"a":[1,2,3,4]}}}] but got [{"x":{"y":{"a":[1,2,3]}}}] at items`,
+      `Expected ${formatToJson([
+        { x: { y: { a: [1, 2, 3, 4] } } },
+      ])} but got ${formatToJson(data.items)} at items`,
     );
     done();
   });

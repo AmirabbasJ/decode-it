@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for optionals', () => {
@@ -46,7 +47,9 @@ describe('json decoder for optionals', () => {
       username: V.optional(V.string()),
     });
     expect(() => decode(data)).to.be.throw(
-      `Expected undefined or string but got ${data.username} at username`,
+      `Expected undefined or string but got ${formatToJson(
+        data.username,
+      )} at username`,
     );
     done();
   });
@@ -72,7 +75,9 @@ describe('json decoder for optionals', () => {
       username: V.optional({ name: V.nil(), isVerified: V.boolean() }),
     });
     expect(() => decode(data)).to.throw(
-      `Expected undefined or specified schema but got ${data.username.name} at username`,
+      `Expected undefined or specified schema but got ${formatToJson(
+        data.username.name,
+      )} at username`,
     );
     done();
   });

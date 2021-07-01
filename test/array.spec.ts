@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for arrays', () => {
@@ -14,7 +15,7 @@ describe('json decoder for arrays', () => {
     const data = { toys: ['car', 'teddyBear', 'nuclearBomb'] };
     const decode = createDecoder({ toys: V.array() });
     expect(() => decode(data)).to.throw(
-      `Expected empty array but got ${data.toys} at toys`,
+      `Expected empty array but got ${formatToJson(data.toys)} at toys`,
     );
     done();
   });
@@ -144,7 +145,9 @@ describe('json decoder for arrays', () => {
       matrix: V.array(V.array({ value: V.number() })),
     });
     expect(() => decode(data)).to.throw(
-      `Expected number but got haha destroyed your schema at matrix[1][2].value`,
+      `Expected number but got ${formatToJson(
+        data.matrix[1][2].value,
+      )} at matrix[1][2].value`,
     );
     done();
   });

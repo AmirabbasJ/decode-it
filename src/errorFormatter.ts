@@ -57,6 +57,6 @@ export const formatFailedDecode = ({
   if (wrapper === 'optional')
     return `Expected undefined or ${expectedType} but got ${formattedActual} at ${path}`;
   return `Expected ${
-    expectedType ?? formattedExpectedValue
+    formattedExpectedValue ?? expectedType
   } but got ${formattedActual} at ${path}`;
 };

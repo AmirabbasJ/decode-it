@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for complex schemas', () => {
@@ -106,7 +107,9 @@ describe('json decoder for complex schemas', () => {
       }),
     });
     expect(() => decode(data)).to.be.throw(
-      'Expected number but got nope at fbiAgent.no.they.wont.see.this.fbiAgentId',
+      `Expected number but got ${formatToJson(
+        data.fbiAgent.no.they.wont.see.this.fbiAgentId,
+      )} at fbiAgent.no.they.wont.see.this.fbiAgentId`,
     );
     done();
   });

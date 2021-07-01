@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for strings', () => {
@@ -14,7 +15,7 @@ describe('json decoder for strings', () => {
     const data = { name: 'nick', country: 14634 };
     const decode = createDecoder({ name: V.string(), country: V.string() });
     expect(() => decode(data)).to.throw(
-      `Expected string but got ${data.country} at country`,
+      `Expected string but got ${formatToJson(data.country)} at country`,
     );
     done();
   });
@@ -51,7 +52,7 @@ describe('json decoder for strings', () => {
       x: { y: { z: { w: V.string() } } },
     });
     expect(() => decode(data)).to.throw(
-      `Expected string but got ${data.x.y.z.w} at x.y.z.w`,
+      `Expected string but got ${formatToJson(data.x.y.z.w)} at x.y.z.w`,
     );
     done();
   });
@@ -61,7 +62,7 @@ describe('json decoder for strings', () => {
       x: { y: { z: { w: V.string() } } },
     });
     expect(() => decode(data)).to.throw(
-      `Expected object but got ${data.x.y} at x.y`,
+      `Expected object but got ${formatToJson(data.x.y)} at x.y`,
     );
     done();
   });

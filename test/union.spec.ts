@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for unions', () => {
@@ -40,7 +41,9 @@ describe('json decoder for unions', () => {
     const data = { city: 'Tehran' };
     const decode = createDecoder({ city: V.union(V.number(), V.boolean()) });
     expect(() => decode(data)).to.throw(
-      `Expected union to match one of specified types but none matched for value ${data.city} at city`,
+      `Expected union to match one of specified types but none matched for value ${formatToJson(
+        data.city,
+      )} at city`,
     );
     done();
   });
@@ -58,7 +61,9 @@ describe('json decoder for unions', () => {
       cities: V.union(V.array(V.number()), V.array(V.nil())),
     });
     expect(() => decode(data)).to.throw(
-      `Expected union to match one of specified types but none matched for value ${data.cities} at cities`,
+      `Expected union to match one of specified types but none matched for value ${formatToJson(
+        data.cities,
+      )} at cities`,
     );
     done();
   });
@@ -98,7 +103,9 @@ describe('json decoder for unions', () => {
       ),
     });
     expect(() => decode(data)).to.throw(
-      `Expected union to match one of specified types but none matched for value ${data.cities} at cities`,
+      `Expected union to match one of specified types but none matched for value ${formatToJson(
+        data.cities,
+      )} at cities`,
     );
     done();
   });

@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for booleans', () => {
@@ -14,7 +15,7 @@ describe('json decoder for booleans', () => {
     const data = { isMale: 'yes' };
     const decode = createDecoder({ isMale: V.boolean() });
     expect(() => decode(data)).to.throw(
-      `Expected boolean but got ${data.isMale} at isMale`,
+      `Expected boolean but got ${formatToJson(data.isMale)} at isMale`,
     );
     done();
   });
@@ -53,7 +54,7 @@ describe('json decoder for booleans', () => {
       x: { y: { z: { w: V.boolean() } } },
     });
     expect(() => decode(data)).to.throw(
-      `Expected boolean but got ${data.x.y.z.w} at x.y.z.w`,
+      `Expected boolean but got ${formatToJson(data.x.y.z.w)} at x.y.z.w`,
     );
     done();
   });
@@ -63,7 +64,7 @@ describe('json decoder for booleans', () => {
       x: { y: { z: { w: V.boolean() } } },
     });
     expect(() => decode(data)).to.throw(
-      `Expected object but got ${data.x.y} at x.y`,
+      `Expected object but got ${formatToJson(data.x.y)} at x.y`,
     );
     done();
   });

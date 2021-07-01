@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for nulls', () => {
@@ -14,7 +15,7 @@ describe('json decoder for nulls', () => {
     const data = { colors: ['red', 'blue', 'green'] };
     const decode = createDecoder({ colors: V.nil() });
     expect(() => decode(data)).to.throw(
-      `Expected null but got ${data.colors} at colors`,
+      `Expected null but got ${formatToJson(data.colors)} at colors`,
     );
     done();
   });
@@ -51,7 +52,7 @@ describe('json decoder for nulls', () => {
       x: { y: { z: { w: V.nil() } } },
     });
     expect(() => decode(data)).to.throw(
-      `Expected null but got ${data.x.y.z.w} at x.y.z.w`,
+      `Expected null but got ${formatToJson(data.x.y.z.w)} at x.y.z.w`,
     );
     done();
   });
@@ -61,7 +62,7 @@ describe('json decoder for nulls', () => {
       x: { y: { z: { w: V.nil() } } },
     });
     expect(() => decode(data)).to.throw(
-      `Expected object but got ${data.x.y} at x.y`,
+      `Expected object but got ${formatToJson(data.x.y)} at x.y`,
     );
     done();
   });
@@ -71,7 +72,7 @@ describe('json decoder for nulls', () => {
       thisIsNotNull: V.nil(),
     });
     expect(() => decode(data)).to.throw(
-      `Expected null but got ${data.thisIsNotNull} at thisIsNotNull`,
+      `Expected null but got ${formatToJson(data.thisIsNotNull)} at thisIsNotNull`,
     );
     done();
   });

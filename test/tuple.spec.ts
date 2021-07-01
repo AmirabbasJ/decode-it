@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for tuples', () => {
@@ -21,7 +22,7 @@ describe('json decoder for tuples', () => {
     const data = { tick: { from: '10/2/1991', ms: 1000 } };
     const decode = createDecoder({ tick: V.tuple(V.string(), V.number()) });
     expect(() => decode(data)).to.be.throw(
-      `Expected array but got ${data.tick} at tick`,
+      `Expected array but got ${formatToJson(data.tick)} at tick`,
     );
     done();
   });
@@ -41,7 +42,7 @@ describe('json decoder for tuples', () => {
     const data = { tick: ['10/2/1991', 1000] };
     const decode = createDecoder({ tick: V.tuple(V.string(), V.boolean()) });
     expect(() => decode(data)).to.throw(
-      `Expected boolean but got ${data.tick[1]} at tick[1]`,
+      `Expected boolean but got ${formatToJson(data.tick[1])} at tick[1]`,
     );
     done();
   });
@@ -71,7 +72,9 @@ describe('json decoder for tuples', () => {
       tick: V.tuple({ from: V.array(V.string()) }, { ms: V.array(V.number()) }),
     });
     expect(() => decode(data)).to.throw(
-      `Expected number but got ${data.tick[1]?.ms?.[1]} at tick[1].ms[1]`,
+      `Expected number but got ${formatToJson(
+        data.tick[1]?.ms?.[1],
+      )} at tick[1].ms[1]`,
     );
     done();
   });

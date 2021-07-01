@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for numbers', () => {
@@ -14,7 +15,7 @@ describe('json decoder for numbers', () => {
     const data = { age: '1236' };
     const decode = createDecoder({ age: V.number() });
     expect(() => decode(data)).to.throw(
-      `Expected number but got ${data.age} at age`,
+      `Expected number but got ${formatToJson(data.age)} at age`,
     );
     done();
   });
@@ -54,7 +55,7 @@ describe('json decoder for numbers', () => {
       x: { y: { z: { w: V.number() } } },
     });
     expect(() => decode(data)).to.throw(
-      `Expected number but got ${data.x.y.z.w} at x.y.z.w`,
+      `Expected number but got ${formatToJson(data.x.y.z.w)} at x.y.z.w`,
     );
     done();
   });
@@ -64,7 +65,7 @@ describe('json decoder for numbers', () => {
       x: { y: { z: { w: V.number() } } },
     });
     expect(() => decode(data)).to.throw(
-      `Expected object but got ${data.x.y} at x.y`,
+      `Expected object but got ${formatToJson(data.x.y)} at x.y`,
     );
     done();
   });
