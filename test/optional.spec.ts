@@ -5,11 +5,11 @@ import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder for optionals', () => {
-  xit('should fail when not including validator for optional field validator', done => {
+  it('should fail when not including validator for optional field validator', done => {
     const data = { email: 'shit@wow.com' };
     const decode = createDecoder({
       email: V.string(),
-      // username: V.optional(),
+      username: V.optional.apply(null, [] as unknown[] as [V.Validator]),
     });
     expect(() => decode(data)).to.throw(
       'Expected optional to have a validator\n' +

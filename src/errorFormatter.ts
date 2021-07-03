@@ -12,19 +12,7 @@ export const formatFailedDecode = ({
 }: FailedDecode): string => {
   const formattedActual = formatToJson(actual);
   const formattedExpectedValue = formatToJson(expectedValue);
-  if (expectedType === 'validator')
-    return (
-      `Expected schema fields to be an validator or another schema but got non validator function at ${path}\n` +
-      `hint: it is possible that you forgot to call the validator e.g this is wrong:\n` +
-      `{\n` +
-      `  field: V.string\n` +
-      `}\n` +
-      `the right way is this:\n` +
-      `{\n` +
-      `  field: V.string()\n` +
-      `}\n` +
-      `so as a rule of thumb: "you are always calling the validator"`
-    );
+
   if (wrapper === 'array' && expectedType === 'none')
     return `Expected empty array but got ${formattedActual} at ${path}`;
   if (wrapper === 'array') {
@@ -54,8 +42,31 @@ export const formatFailedDecode = ({
     return `Expected union to match one of specified types but none matched for value ${formattedActual} at ${path}`;
   if (wrapper === 'optional' && expectedType === 'object')
     return `Expected undefined or specified schema but got ${formattedActual} at ${path}`;
+  if (wrapper === 'optional' && expectedType === 'validator')
+    return (
+      'Expected optional to have a validator\n' +
+      'hint: you passed V.optional without a validator\n' +
+      'you should pass one validator so that if the field exists\n' +
+      'we can validate it by the specified type e.g:\n' +
+      '{\n' +
+      '  field: V.optional(V.string()) // string or undefined\n' +
+      '}'
+    );
   if (wrapper === 'optional')
     return `Expected undefined or ${expectedType} but got ${formattedActual} at ${path}`;
+  if (expectedType === 'validator')
+    return (
+      `Expected schema fields to be an validator or another schema but got non validator function at ${path}\n` +
+      `hint: it is possible that you forgot to call the validator e.g this is wrong:\n` +
+      `{\n` +
+      `  field: V.string\n` +
+      `}\n` +
+      `the right way is this:\n` +
+      `{\n` +
+      `  field: V.string()\n` +
+      `}\n` +
+      `so as a rule of thumb: "you are always calling the validator"`
+    );
   return `Expected ${
     formattedExpectedValue ?? expectedType
   } but got ${formattedActual} at ${path}`;

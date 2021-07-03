@@ -241,6 +241,13 @@ export const tuple =
 export const optional =
   (validator: Schema | Validator): Validator =>
   (arg: unknown) => {
+    if (isUndefined(validator))
+      return {
+        value: undefined,
+        state: 'failed',
+        type: 'validator',
+        wrapper: 'optional',
+      };
     if (isUndefined(arg)) return passedValidation;
     if (isObject(validator)) {
       if (!isObject(arg))
