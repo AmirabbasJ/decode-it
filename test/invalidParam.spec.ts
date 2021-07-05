@@ -6,7 +6,7 @@ import * as V from '../src/validators';
 describe('json decoder when passing invalid parameter types', () => {
   it('should fail when given non object as schema', done => {
     const createInvalidDecoder = () =>
-      createDecoder('not schema' as unknown as Schema);
+      createDecoder('not schema' as unknown as Schema<any>);
     expect(createInvalidDecoder).to.throw(
       `Expected schema to be an object but got not schema`,
     );
@@ -14,7 +14,7 @@ describe('json decoder when passing invalid parameter types', () => {
   });
   it('should fail when given non validator to a schema', done => {
     const createInvalidDecoder = () =>
-      createDecoder({ thisIsAField: 'bool' } as unknown as Schema);
+      createDecoder({ thisIsAField: 'bool' } as unknown as Schema<any>);
     expect(createInvalidDecoder).to.throw(
       `Expected schema fields to be an validator or another schema but got bool at thisIsAField`,
     );
@@ -24,7 +24,7 @@ describe('json decoder when passing invalid parameter types', () => {
     const createInvalidDecoder = () =>
       createDecoder({
         thisIsAField: { hey: true, boo: { see: true } },
-      } as unknown as Schema);
+      } as unknown as Schema<any>);
     expect(createInvalidDecoder).to.throw(
       `Expected schema fields to be an validator or another schema but got true at thisIsAField.hey`,
     );
@@ -35,7 +35,7 @@ describe('json decoder when passing invalid parameter types', () => {
     const data = { thisIsAField: { hey: 'wow string' } };
     const decode = createDecoder({
       thisIsAField: { hey: wowString },
-    } as unknown as Schema);
+    } as unknown as Schema<any>);
     expect(() => decode(data)).to.throw(
       `Expected schema fields to be an validator or another schema but got non validator function at thisIsAField.hey\n` +
         `hint: it is possible that you forgot to call the validator e.g this is wrong:\n` +
@@ -56,7 +56,7 @@ describe('json decoder when passing invalid parameter types', () => {
     const decode = createDecoder({
       thisIsAField: { hey: V.string(), boo: { see: V.boolean() } },
     });
-    expect(() => decode(data as unknown as Json)).to.throw(
+    expect(() => decode(data as unknown as Json<any>)).to.throw(
       `Expected json to be an object but got wow`,
     );
     done();

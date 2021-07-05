@@ -9,7 +9,7 @@ describe('json decoder for optionals', () => {
     const data = { email: 'shit@wow.com' };
     const decode = createDecoder({
       email: V.string(),
-      username: V.optional.apply(null, [] as unknown[] as [V.Validator]),
+      username: V.optional.apply(null, [] as unknown[] as [V.Validator<any>]),
     });
     expect(() => decode(data)).to.throw(
       'Expected optional to have a validator\n' +

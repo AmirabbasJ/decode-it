@@ -2,12 +2,18 @@ import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
 import { formatToJson } from '../src/errorFormatter';
+import { TwinePregnantArray } from '../src/helperTypes';
 import * as V from '../src/validators';
 
 describe('json decoder for unions', () => {
   it('should fail when given no validators', done => {
     const data = { name: 'sam' };
-    const decode = createDecoder({ name: V.union() });
+    const decode = createDecoder({
+      name: V.union.apply(
+        null,
+        [] as unknown[] as TwinePregnantArray<V.Validator<any>>,
+      ),
+    });
     expect(() => decode(data)).to.throw(
       'Expected union to have two or more validators\n' +
         'hint: you passed V.union with less than two validators to choose from\n' +
@@ -20,7 +26,11 @@ describe('json decoder for unions', () => {
   });
   it('should fail when given only one validator', done => {
     const data = { name: 'sam' };
-    const decode = createDecoder({ name: V.union(V.string()) });
+    const decode = createDecoder({
+      name: V.union.apply(null, [V.string()] as unknown[] as TwinePregnantArray<
+        V.Validator<any>
+      >),
+    });
     expect(() => decode(data)).to.throw(
       'Expected union to have two or more validators\n' +
         'hint: you passed V.union with less than two validators to choose from\n' +

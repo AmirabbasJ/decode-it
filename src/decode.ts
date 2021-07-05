@@ -1,13 +1,16 @@
 import { formatFailedDecode } from './errorFormatter';
+import { ToOptional } from './helperTypes';
 import { isFunction, isObject, isUndefined } from './typeCheckers';
 import { flatObject } from './utils';
 import type { FailedValidation, Validator } from './validators';
 
-export interface Schema {
-  [key: string]: Schema | Validator;
+export interface Schema<T> {
+  [key: string]: Schema<T> | Validator<T>;
 }
 
-export type Json = Record<string, unknown>;
+export interface Json<T> {
+  [key: string]: T;
+}
 
 export interface FailedDecode {
   actual: unknown;
@@ -24,6 +27,14 @@ class DecodeError extends Error {
   }
 }
 
+export type toNativeType<T> = T extends Validator<infer R>
+  ? R
+  : ToOptional<
+      {
+        [key in keyof T]: toNativeType<T[key]>;
+      }
+    >;
+
 const isValidationResult = (arg: unknown) => {
   if (!isObject(arg)) return false;
   if (arg.state !== 'failed' && arg.state !== 'passed') return false;
@@ -36,7 +47,10 @@ const concatNestedErrors = (errorsSources: FailedDecode[], currentKey: string) =
     path: `${currentKey}.${errorSource.path}`,
   }));
 
-export const getFailedDecodes = (schema: Schema, json: Json): FailedDecode[] => {
+export const getFailedDecodes = <T extends Schema<any>, J extends Json<any>>(
+  schema: Schema<T>,
+  json: J,
+): FailedDecode[] => {
   return Object.entries(schema).reduce((errors: FailedDecode[], [key, validate]) => {
     const field = json[key];
     if (isObject(validate)) {
@@ -72,7 +86,7 @@ export const getFailedDecodes = (schema: Schema, json: Json): FailedDecode[] => 
   }, []);
 };
 
-export const createDecoder = (schema: Schema) => {
+export const createDecoder = <T extends Schema<any>>(schema: T) => {
   if (!isObject(schema))
     throw new DecodeError(`Expected schema to be an object but got ${schema}`);
   const nonFunctionField = flatObject(schema).find(
@@ -82,7 +96,7 @@ export const createDecoder = (schema: Schema) => {
     throw new DecodeError(
       `Expected schema fields to be an validator or another schema but got ${nonFunctionField[1]} at ${nonFunctionField[0]}`,
     );
-  return <T extends Json>(json: T): T | never => {
+  return <J extends Json<any>>(json: J): J | never => {
     if (!isObject(json))
       throw new DecodeError(`Expected json to be an object but got ${json}`);
 

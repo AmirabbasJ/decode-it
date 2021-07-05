@@ -1,4 +1,7 @@
-import { getFailedDecodes, Schema } from './decode';
+import { F } from 'ts-toolbelt';
+
+import { getFailedDecodes, Schema, toNativeType } from './decode';
+import { AnyElementOf, TwinePregnantArray } from './helperTypes';
 import {
   isArray,
   isBoolean,
@@ -37,9 +40,9 @@ const passedValidation: passedValidation = { state: 'passed' };
 // export const createFailedValidation = (value,type,wrapper,path) => ({value,type,wrapper,path})
 export type ValidationResult = FailedValidation | passedValidation;
 
-export type Validator = (arg: unknown) => ValidationResult;
+export type Validator<T> = (arg: T) => ValidationResult;
 
-export const string = (): Validator => arg =>
+export const string = (): Validator<string> => arg =>
   isString(arg)
     ? passedValidation
     : {
@@ -48,7 +51,7 @@ export const string = (): Validator => arg =>
         type: 'string',
       };
 
-export const number = (): Validator => arg =>
+export const number = (): Validator<number> => arg =>
   isNumber(arg)
     ? passedValidation
     : {
@@ -57,7 +60,7 @@ export const number = (): Validator => arg =>
         state: 'failed',
       };
 
-export const boolean = (): Validator => arg =>
+export const boolean = (): Validator<boolean> => arg =>
   isBoolean(arg)
     ? passedValidation
     : {
@@ -66,7 +69,7 @@ export const boolean = (): Validator => arg =>
         state: 'failed',
       };
 
-export const nil = (): Validator => arg =>
+export const nil = (): Validator<null> => arg =>
   isNull(arg)
     ? passedValidation
     : {
@@ -76,7 +79,9 @@ export const nil = (): Validator => arg =>
       };
 
 export const array =
-  (itemValidator?: Schema | Validator): Validator =>
+  <T extends Schema<any> | Validator<any>>(
+    validator?: T,
+  ): Validator<toNativeType<T>[]> =>
   (arg: unknown) => {
     if (!isArray(arg))
       return {
@@ -86,7 +91,7 @@ export const array =
         wrapper: 'array',
       };
 
-    if (itemValidator == null) {
+    if (validator == null) {
       return isEmptyArray(arg)
         ? passedValidation
         : {
@@ -96,7 +101,7 @@ export const array =
             wrapper: 'array',
           };
     }
-    if (isObject(itemValidator)) {
+    if (isObject(validator)) {
       const areAllItemsObject = arg.every(item => isObject(item));
       if (!areAllItemsObject)
         return {
@@ -106,7 +111,7 @@ export const array =
           wrapper: 'array',
         };
       const itemsFailedDecodes = arg.map(item =>
-        getFailedDecodes(itemValidator, item as Record<string, unknown>),
+        getFailedDecodes(validator, item as Record<string, unknown>),
       );
       const noFailedDecodes = itemsFailedDecodes.every(isEmptyArray);
       if (noFailedDecodes) return passedValidation;
@@ -130,7 +135,7 @@ export const array =
 
     const itemsFailedResults = arg.reduce(
       (failedResults: FailedValidation[], item: unknown, index) => {
-        const result = itemValidator(item);
+        const result = validator(item);
         return result.state === 'failed'
           ? failedResults.concat({
               ...result,
@@ -154,7 +159,9 @@ export const array =
   };
 
 export const union =
-  (...itemValidators: Validator[]): Validator =>
+  <T extends TwinePregnantArray<Validator<any>>>(
+    ...itemValidators: T
+  ): Validator<toNativeType<AnyElementOf<T>>> =>
   (arg: unknown) => {
     if (isEmptyArray(itemValidators) || itemValidators.length === 1) {
       return {
@@ -178,7 +185,9 @@ export const union =
   };
 
 export const tuple =
-  (...itemValidators: (Schema | Validator)[]): Validator =>
+  <T extends (Schema<any> | Validator<any>)[]>(
+    ...itemValidators: T
+  ): Validator<toNativeType<T>> =>
   (arg: unknown) => {
     if (isEmptyArray(itemValidators))
       return {
@@ -238,9 +247,12 @@ export const tuple =
       wrapper: 'tuple',
     };
   };
+
 export const optional =
-  (validator: Schema | Validator): Validator =>
-  (arg: unknown) => {
+  <T extends Schema<any> | Validator<any>>(
+    validator: T,
+  ): Validator<toNativeType<T> | undefined> =>
+  arg => {
     if (isUndefined(validator))
       return {
         value: undefined,
@@ -268,7 +280,7 @@ export const optional =
   };
 
 export const literal =
-  (val: unknown): Validator =>
+  <T>(val: F.Narrow<T>): Validator<T> =>
   (arg: unknown) => {
     if (isArray(val) || isObject(val)) {
       const areEqual = deepEq(val, arg);
