@@ -4,9 +4,11 @@ import { isEmptyArray } from '../typeCheckers';
 import { passedValidation } from './ValidationResult';
 import { Validator } from './Validator';
 
-export const union = <T extends TwinePregnantArray<Validator<any>>>(
+type union = <T extends TwinePregnantArray<Validator<any>>>(
   ...itemValidators: T
-): Validator<toNativeType<AnyElementOf<T>>> => {
+) => Validator<toNativeType<AnyElementOf<T>>>;
+
+export const union: union = (...itemValidators) => {
   return (arg: unknown) => {
     if (isEmptyArray(itemValidators) || itemValidators.length === 1) {
       return {

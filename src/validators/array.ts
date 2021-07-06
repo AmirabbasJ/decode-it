@@ -4,9 +4,11 @@ import { isArray, isEmptyArray, isObject } from '../typeCheckers';
 import { FailedValidation, passedValidation } from './ValidationResult';
 import { Validator } from './Validator';
 
-export const array = <T extends Schema<any> | Validator<any>>(
-  validator?: T,
-): Validator<toNativeType<T>[]> => {
+type array = <T extends Schema<any> | Validator<any>>(
+  validator?: T | undefined,
+) => Validator<toNativeType<T>[]>;
+
+export const array: array = validator => {
   return (arg: unknown) => {
     if (!isArray(arg))
       return {

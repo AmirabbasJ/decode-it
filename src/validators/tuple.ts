@@ -8,10 +8,11 @@ import {
 } from './ValidationResult';
 import { Validator } from './Validator';
 
-export const tuple =
-  <T extends (Schema<any> | Validator<any>)[]>(
-    ...itemValidators: T
-  ): Validator<toNativeType<T>> =>
+type tuple = <T extends (Schema<any> | Validator<any>)[]>(
+  ...itemValidators: T
+) => Validator<toNativeType<T>>;
+export const tuple: tuple =
+  (...itemValidators) =>
   arg => {
     if (isEmptyArray(itemValidators))
       return {
