@@ -1,6 +1,6 @@
 export type AnyElementOf<T extends any[]> = T[number];
 export type NonEmptyArray<T> = [T, ...T[]];
-export type TwinePregnantArray<T> = T[] & {
+export type ArrayTwoOrMore<T> = T[] & {
   0: T;
   1: T;
 };

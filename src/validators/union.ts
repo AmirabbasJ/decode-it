@@ -1,10 +1,10 @@
-import { AnyElementOf, TwinePregnantArray } from '../helperTypes';
+import { AnyElementOf, ArrayTwoOrMore } from '../helperTypes';
 import { toNativeType } from '../toNativeType';
 import { isEmptyArray } from '../typeCheckers';
 import { passedValidation } from './ValidationResult';
 import { Validator } from './Validator';
 
-type union = <T extends TwinePregnantArray<Validator<any>>>(
+type union = <T extends ArrayTwoOrMore<Validator<any>>>(
   ...itemValidators: T
 ) => Validator<toNativeType<AnyElementOf<T>>>;
 
