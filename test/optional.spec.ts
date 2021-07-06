@@ -37,7 +37,7 @@ describe('json decoder for optionals', () => {
       email: V.string(),
       username: V.optional(V.string()),
     });
-    expect(decode(data)).to.be.eq(data);
+    expect(decode(data as any)).to.be.eq(data);
     done();
   });
   it('should fail when including optional field but expecting different type', done => {
@@ -46,7 +46,7 @@ describe('json decoder for optionals', () => {
       email: V.string(),
       username: V.optional(V.string()),
     });
-    expect(() => decode(data)).to.be.throw(
+    expect(() => decode(data as any)).to.be.throw(
       `Expected undefined or string but got ${formatToJson(
         data.username,
       )} at username`,
@@ -74,7 +74,7 @@ describe('json decoder for optionals', () => {
       email: V.string(),
       username: V.optional({ name: V.nil(), isVerified: V.boolean() }),
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected undefined or specified schema but got ${formatToJson(
         data.username.name,
       )} at username`,

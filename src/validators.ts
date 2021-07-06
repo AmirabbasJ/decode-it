@@ -188,7 +188,7 @@ export const tuple =
   <T extends (Schema<any> | Validator<any>)[]>(
     ...itemValidators: T
   ): Validator<toNativeType<T>> =>
-  (arg: unknown) => {
+  arg => {
     if (isEmptyArray(itemValidators))
       return {
         value: arg,

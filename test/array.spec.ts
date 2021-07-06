@@ -4,6 +4,7 @@ import { createDecoder } from '../src/decode';
 import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
+// eslint-disable-next-line max-lines-per-function
 describe('json decoder for arrays', () => {
   it('should pass when given an empty array and expecting it to be so', done => {
     const data = { toys: [] };
@@ -14,7 +15,7 @@ describe('json decoder for arrays', () => {
   it('should fail when given non empty array and expecting an empty array', done => {
     const data = { toys: ['car', 'teddyBear', 'nuclearBomb'] };
     const decode = createDecoder({ toys: V.array() });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected empty array but got ${formatToJson(data.toys)} at toys`,
     );
     done();
@@ -22,13 +23,13 @@ describe('json decoder for arrays', () => {
   it('should pass when given an array of strings and expecting it to be so', done => {
     const data = { toys: ['car', 'teddyBear', 'nuclearBomb'] };
     const decode = createDecoder({ toys: V.array(V.string()) });
-    expect(decode(data)).to.be.eq(data);
+    expect(decode(data as any)).to.be.eq(data);
     done();
   });
   it('should pass when given an empty array and expecting an array of strings', done => {
     const data = { toys: [] };
     const decode = createDecoder({ toys: V.array(V.string()) });
-    expect(decode(data)).to.be.eq(data);
+    expect(decode(data as any)).to.be.eq(data);
     done();
   });
   it('should pass when given an array of objects and expecting same array of those objects structure', done => {
@@ -60,7 +61,7 @@ describe('json decoder for arrays', () => {
         age: V.number(),
       }),
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected string but got undefined at toys[0].firstName`,
     );
     done();
@@ -90,7 +91,9 @@ describe('json decoder for arrays', () => {
     const decode = createDecoder({
       matrix: V.array(V.array(V.string())),
     });
-    expect(() => decode(data)).to.throw(`Expected string but got 1 at matrix[0][0]`);
+    expect(() => decode(data as any)).to.throw(
+      `Expected string but got 1 at matrix[0][0]`,
+    );
     done();
   });
   it('should fail when given 1D array and expecting 2D array', done => {
@@ -100,7 +103,9 @@ describe('json decoder for arrays', () => {
     const decode = createDecoder({
       matrix: V.array(V.array(V.number())),
     });
-    expect(() => decode(data)).to.throw(`Expected array but got 1 at matrix[0]`);
+    expect(() => decode(data as any)).to.throw(
+      `Expected array but got 1 at matrix[0]`,
+    );
     done();
   });
   it('should pass when given nested array of objects and expecting it with same object structure', done => {
@@ -128,7 +133,7 @@ describe('json decoder for arrays', () => {
     const decode = createDecoder({
       matrix: V.array(V.array({ value: V.number() })),
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected number but got undefined at matrix[1][2].value`,
     );
     done();
@@ -144,7 +149,7 @@ describe('json decoder for arrays', () => {
     const decode = createDecoder({
       matrix: V.array(V.array({ value: V.number() })),
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected number but got ${formatToJson(
         data.matrix[1][2].value,
       )} at matrix[1][2].value`,

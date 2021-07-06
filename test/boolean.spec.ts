@@ -14,7 +14,7 @@ describe('json decoder for booleans', () => {
   it('should throw when given non boolean fields', done => {
     const data = { isMale: 'yes' };
     const decode = createDecoder({ isMale: V.boolean() });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected boolean but got ${formatToJson(data.isMale)} at isMale`,
     );
     done();
@@ -35,7 +35,7 @@ describe('json decoder for booleans', () => {
   it('should throw when not including required fields', done => {
     const data = { isAdult: true };
     const decode = createDecoder({ isAdult: V.boolean(), isDrunk: V.boolean() });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected boolean but got undefined at isDrunk`,
     );
     done();
@@ -53,7 +53,7 @@ describe('json decoder for booleans', () => {
     const decode = createDecoder({
       x: { y: { z: { w: V.boolean() } } },
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected boolean but got ${formatToJson(data.x.y.z.w)} at x.y.z.w`,
     );
     done();
@@ -63,7 +63,7 @@ describe('json decoder for booleans', () => {
     const decode = createDecoder({
       x: { y: { z: { w: V.boolean() } } },
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected object but got ${formatToJson(data.x.y)} at x.y`,
     );
     done();

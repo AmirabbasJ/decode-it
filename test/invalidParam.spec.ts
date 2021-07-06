@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { createDecoder, Json, Schema } from '../src/decode';
+import { createDecoder, Schema } from '../src/decode';
 import * as V from '../src/validators';
 
 describe('json decoder when passing invalid parameter types', () => {
@@ -56,7 +56,7 @@ describe('json decoder when passing invalid parameter types', () => {
     const decode = createDecoder({
       thisIsAField: { hey: V.string(), boo: { see: V.boolean() } },
     });
-    expect(() => decode(data as unknown as Json<any>)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected json to be an object but got wow`,
     );
     done();

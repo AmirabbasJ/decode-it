@@ -18,7 +18,7 @@ describe('json decoder for literals', () => {
     const decode = createDecoder({
       email: V.literal('shit@wow.com'),
     });
-    expect(decode(data)).to.be.eq(data);
+    expect(decode(data as any)).to.be.eq(data);
     done();
   });
   it('should fail when given literal with different value as parameter', done => {
@@ -26,7 +26,7 @@ describe('json decoder for literals', () => {
     const decode = createDecoder({
       email: V.literal('notshit@wow.com'),
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected "notshit@wow.com" but got ${formatToJson(data.email)} at email`,
     );
     done();

@@ -50,7 +50,7 @@ describe('json decoder for unions', () => {
   it('should fail when given two validators which none of them match', done => {
     const data = { city: 'Tehran' };
     const decode = createDecoder({ city: V.union(V.number(), V.boolean()) });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected union to match one of specified types but none matched for value ${formatToJson(
         data.city,
       )} at city`,
@@ -70,7 +70,7 @@ describe('json decoder for unions', () => {
     const decode = createDecoder({
       cities: V.union(V.array(V.number()), V.array(V.nil())),
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected union to match one of specified types but none matched for value ${formatToJson(
         data.cities,
       )} at cities`,
@@ -112,7 +112,7 @@ describe('json decoder for unions', () => {
         V.array({ name: V.string(), visited: V.boolean() }),
       ),
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected union to match one of specified types but none matched for value ${formatToJson(
         data.cities,
       )} at cities`,

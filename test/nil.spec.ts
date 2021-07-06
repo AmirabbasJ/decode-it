@@ -14,7 +14,7 @@ describe('json decoder for nulls', () => {
   it('should throw when given non null fields', done => {
     const data = { colors: ['red', 'blue', 'green'] };
     const decode = createDecoder({ colors: V.nil() });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected null but got ${formatToJson(data.colors)} at colors`,
     );
     done();
@@ -35,7 +35,9 @@ describe('json decoder for nulls', () => {
   it('should throw when not including required fields', done => {
     const data = { talent: null };
     const decode = createDecoder({ talent: V.nil(), name: V.nil() });
-    expect(() => decode(data)).to.throw(`Expected null but got undefined at name`);
+    expect(() => decode(data as any)).to.throw(
+      `Expected null but got undefined at name`,
+    );
     done();
   });
   it('should pass when given same nested null fields', done => {
@@ -51,7 +53,7 @@ describe('json decoder for nulls', () => {
     const decode = createDecoder({
       x: { y: { z: { w: V.nil() } } },
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected null but got ${formatToJson(data.x.y.z.w)} at x.y.z.w`,
     );
     done();
@@ -61,7 +63,7 @@ describe('json decoder for nulls', () => {
     const decode = createDecoder({
       x: { y: { z: { w: V.nil() } } },
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected object but got ${formatToJson(data.x.y)} at x.y`,
     );
     done();
@@ -71,7 +73,7 @@ describe('json decoder for nulls', () => {
     const decode = createDecoder({
       thisIsNotNull: V.nil(),
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected null but got ${formatToJson(data.thisIsNotNull)} at thisIsNotNull`,
     );
     done();

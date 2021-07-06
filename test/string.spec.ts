@@ -14,7 +14,7 @@ describe('json decoder for strings', () => {
   it('should throw when given non string fields', done => {
     const data = { name: 'nick', country: 14634 };
     const decode = createDecoder({ name: V.string(), country: V.string() });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected string but got ${formatToJson(data.country)} at country`,
     );
     done();
@@ -33,7 +33,7 @@ describe('json decoder for strings', () => {
   it('should throw when not including required fields', done => {
     const data = { name: 'Nick' };
     const decode = createDecoder({ name: V.string(), country: V.string() });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected string but got undefined at country`,
     );
     done();
@@ -51,7 +51,7 @@ describe('json decoder for strings', () => {
     const decode = createDecoder({
       x: { y: { z: { w: V.string() } } },
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected string but got ${formatToJson(data.x.y.z.w)} at x.y.z.w`,
     );
     done();
@@ -61,7 +61,7 @@ describe('json decoder for strings', () => {
     const decode = createDecoder({
       x: { y: { z: { w: V.string() } } },
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected object but got ${formatToJson(data.x.y)} at x.y`,
     );
     done();

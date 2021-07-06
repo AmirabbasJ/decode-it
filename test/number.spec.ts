@@ -14,7 +14,7 @@ describe('json decoder for numbers', () => {
   it('should throw when given non number fields', done => {
     const data = { age: '1236' };
     const decode = createDecoder({ age: V.number() });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected number but got ${formatToJson(data.age)} at age`,
     );
     done();
@@ -36,7 +36,7 @@ describe('json decoder for numbers', () => {
   it('should throw when not including required fields', done => {
     const data = { age: 41 };
     const decode = createDecoder({ age: V.number(), height: V.number() });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected number but got undefined at height`,
     );
     done();
@@ -54,7 +54,7 @@ describe('json decoder for numbers', () => {
     const decode = createDecoder({
       x: { y: { z: { w: V.number() } } },
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected number but got ${formatToJson(data.x.y.z.w)} at x.y.z.w`,
     );
     done();
@@ -64,7 +64,7 @@ describe('json decoder for numbers', () => {
     const decode = createDecoder({
       x: { y: { z: { w: V.number() } } },
     });
-    expect(() => decode(data)).to.throw(
+    expect(() => decode(data as any)).to.throw(
       `Expected object but got ${formatToJson(data.x.y)} at x.y`,
     );
     done();

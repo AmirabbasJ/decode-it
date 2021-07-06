@@ -8,5 +8,10 @@ export type UndefinedProperties<T> = {
   [P in keyof T]-?: undefined extends T[P] ? P : never;
 }[keyof T];
 
-export type ToOptional<T> = Partial<Pick<T, UndefinedProperties<T>>> &
-  Pick<T, Exclude<keyof T, UndefinedProperties<T>>>;
+type UndefinedKeys<T> = {
+  [P in keyof T]: undefined extends T[P] ? P : never;
+}[keyof T];
+
+export type OptionalUndefined<T> = Omit<T, UndefinedKeys<T>> &
+  Partial<Pick<T, UndefinedKeys<T>>>;
+export type Id<T> = { [P in keyof T]: T[P] };

@@ -1,15 +1,11 @@
 import { formatFailedDecode } from './errorFormatter';
-import { ToOptional } from './helperTypes';
+import { Id, OptionalUndefined } from './helperTypes';
 import { isFunction, isObject, isUndefined } from './typeCheckers';
 import { flatObject } from './utils';
 import type { FailedValidation, Validator } from './validators';
 
 export interface Schema<T> {
   [key: string]: Schema<T> | Validator<T>;
-}
-
-export interface Json<T> {
-  [key: string]: T;
 }
 
 export interface FailedDecode {
@@ -26,14 +22,14 @@ class DecodeError extends Error {
     this.name = '\nDecode Error';
   }
 }
-
+type _toNativeType<T> = T extends Validator<infer R>
+  ? R
+  : {
+      [key in keyof T]: _toNativeType<T[key]>;
+    };
 export type toNativeType<T> = T extends Validator<infer R>
   ? R
-  : ToOptional<
-      {
-        [key in keyof T]: toNativeType<T[key]>;
-      }
-    >;
+  : Id<OptionalUndefined<_toNativeType<T>>>;
 
 const isValidationResult = (arg: unknown) => {
   if (!isObject(arg)) return false;
@@ -47,12 +43,12 @@ const concatNestedErrors = (errorsSources: FailedDecode[], currentKey: string) =
     path: `${currentKey}.${errorSource.path}`,
   }));
 
-export const getFailedDecodes = <T extends Schema<any>, J extends Json<any>>(
+export const getFailedDecodes = <T extends Schema<any>, J extends toNativeType<T>>(
   schema: Schema<T>,
   json: J,
 ): FailedDecode[] => {
   return Object.entries(schema).reduce((errors: FailedDecode[], [key, validate]) => {
-    const field = json[key];
+    const field = json[key as keyof toNativeType<T>];
     if (isObject(validate)) {
       if (!isObject(field))
         return errors.concat({
@@ -61,7 +57,7 @@ export const getFailedDecodes = <T extends Schema<any>, J extends Json<any>>(
           path: key,
         });
 
-      const errorsSource = getFailedDecodes(validate, field);
+      const errorsSource = getFailedDecodes(validate, field as J);
       const error = concatNestedErrors(errorsSource, key);
       return errors.concat(error);
     }
@@ -96,7 +92,7 @@ export const createDecoder = <T extends Schema<any>>(schema: T) => {
     throw new DecodeError(
       `Expected schema fields to be an validator or another schema but got ${nonFunctionField[1]} at ${nonFunctionField[0]}`,
     );
-  return <J extends Json<any>>(json: J): J | never => {
+  return <J extends toNativeType<T>>(json: J): J | never => {
     if (!isObject(json))
       throw new DecodeError(`Expected json to be an object but got ${json}`);
 
