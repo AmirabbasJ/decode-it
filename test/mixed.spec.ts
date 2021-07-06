@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 
-import { createDecoder, toNativeType } from '../src/decode';
+import { createDecoder } from '../src/decode';
 import { formatToJson } from '../src/errorFormatter';
+import { toNativeType } from '../src/toNativeType';
 import * as V from '../src/validators';
 
 describe('json decoder for complex schemas', () => {

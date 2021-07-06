@@ -1,7 +1,8 @@
 import { F } from 'ts-toolbelt';
 
-import { getFailedDecodes, Schema, toNativeType } from './decode';
+import { getFailedDecodes, Schema } from './decode';
 import { AnyElementOf, TwinePregnantArray } from './helperTypes';
+import type { toNativeType } from './toNativeType';
 import {
   isArray,
   isBoolean,

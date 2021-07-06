@@ -1,5 +1,5 @@
 import { formatFailedDecode } from './errorFormatter';
-import { Id, OptionalUndefined } from './helperTypes';
+import type { toNativeType } from './toNativeType';
 import { isFunction, isObject, isUndefined } from './typeCheckers';
 import { flatObject } from './utils';
 import type { FailedValidation, Validator } from './validators';
@@ -22,14 +22,6 @@ class DecodeError extends Error {
     this.name = '\nDecode Error';
   }
 }
-type _toNativeType<T> = T extends Validator<infer R>
-  ? R
-  : {
-      [key in keyof T]: _toNativeType<T[key]>;
-    };
-export type toNativeType<T> = T extends Validator<infer R>
-  ? R
-  : Id<OptionalUndefined<_toNativeType<T>>>;
 
 const isValidationResult = (arg: unknown) => {
   if (!isObject(arg)) return false;
