@@ -2,7 +2,8 @@ import { formatFailedDecode } from './errorFormatter';
 import type { toNativeType } from './toNativeType';
 import { isFunction, isObject, isUndefined } from './typeCheckers';
 import { flatObject } from './utils';
-import type { FailedValidation, Validator } from './validators';
+import { FailedValidation } from './validators/ValidationResult';
+import { Validator } from './validators/Validator';
 
 export interface Schema<T> {
   [key: string]: Schema<T> | Validator<T>;

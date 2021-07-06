@@ -4,6 +4,7 @@ import { createDecoder } from '../src/decode';
 import { formatToJson } from '../src/errorFormatter';
 import { TwinePregnantArray } from '../src/helperTypes';
 import * as V from '../src/validators';
+import { Validator } from '../src/validators/Validator';
 
 describe('json decoder for unions', () => {
   it('should fail when given no validators', done => {
@@ -11,7 +12,7 @@ describe('json decoder for unions', () => {
     const decode = createDecoder({
       name: V.union.apply(
         null,
-        [] as unknown[] as TwinePregnantArray<V.Validator<any>>,
+        [] as unknown[] as TwinePregnantArray<Validator<any>>,
       ),
     });
     expect(() => decode(data)).to.throw(
@@ -28,7 +29,7 @@ describe('json decoder for unions', () => {
     const data = { name: 'sam' };
     const decode = createDecoder({
       name: V.union.apply(null, [V.string()] as unknown[] as TwinePregnantArray<
-        V.Validator<any>
+        Validator<any>
       >),
     });
     expect(() => decode(data)).to.throw(

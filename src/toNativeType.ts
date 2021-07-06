@@ -1,5 +1,5 @@
 import { Id, OptionalUndefined } from './helperTypes';
-import { Validator } from './validators';
+import { Validator } from './validators/Validator';
 
 type _toNativeType<T> = T extends Validator<infer R>
   ? R

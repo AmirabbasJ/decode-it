@@ -3,13 +3,14 @@ import { expect } from 'chai';
 import { createDecoder } from '../src/decode';
 import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
+import { Validator } from '../src/validators/Validator';
 
 describe('json decoder for optionals', () => {
   it('should fail when not including validator for optional field validator', done => {
     const data = { email: 'shit@wow.com' };
     const decode = createDecoder({
       email: V.string(),
-      username: V.optional.apply(null, [] as unknown[] as [V.Validator<any>]),
+      username: V.optional.apply(null, [] as unknown[] as [Validator<any>]),
     });
     expect(() => decode(data)).to.throw(
       'Expected optional to have a validator\n' +
