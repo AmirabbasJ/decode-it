@@ -16,10 +16,16 @@ export interface FailedValidation {
   literal?: unknown;
 }
 
-export interface passedValidation {
+export interface PassedValidation {
   state: 'passed';
 }
-export const passedValidation: passedValidation = { state: 'passed' };
+export const passedValidation: PassedValidation = { state: 'passed' };
 // TODO: \/
 // export const createFailedValidation = (value,type,wrapper,path) => ({value,type,wrapper,path})
-export type ValidationResult = FailedValidation | passedValidation;
+export type ValidationResult = FailedValidation | PassedValidation;
+
+export const isFailedValidation = (v: ValidationResult): v is FailedValidation =>
+  v.state === 'failed';
+export const isPassedValidation = (v: ValidationResult): v is PassedValidation =>
+  v.state === 'passed';
+export type FailedValidationConstructor = (arg: unknown) => FailedValidation;
