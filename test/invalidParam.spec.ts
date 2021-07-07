@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
 import { createDecoder, Schema } from '../src/decode';
+import { formatToJson } from '../src/errorFormatter';
 import * as V from '../src/validators';
 
 describe('json decoder when passing invalid parameter types', () => {
@@ -8,7 +9,9 @@ describe('json decoder when passing invalid parameter types', () => {
     const createInvalidDecoder = () =>
       createDecoder('not schema' as unknown as Schema<any>);
     expect(createInvalidDecoder).to.throw(
-      `Expected schema to be an object but got not schema`,
+      `Expected schema to be an object or an array validator but got ${formatToJson(
+        'not schema',
+      )}`,
     );
     done();
   });

@@ -156,4 +156,26 @@ describe('json decoder for arrays', () => {
     );
     done();
   });
+  it('should pass when given array as schema with same type as parameter', done => {
+    const data = [
+      [{ value: 1 }, { value: 2 }, { value: 3 }],
+      [{ value: 4 }, { value: 5 }, { value: 6 }],
+      [{ value: 7 }, { value: 8 }, { value: 9 }],
+    ];
+    const decode = createDecoder(V.array(V.array({ value: V.number() })));
+    expect(decode(data as any)).to.be.eq(data);
+    done();
+  });
+  it('should fail when given array as schema with different object type as parameter', done => {
+    const data = [
+      [{ value: 1 }, { value: 2 }, { value: 3 }],
+      [{ value: 4 }, { value: 5 }, { value: 'haha destroyed your schema' }],
+      [{ value: 7 }, { value: 8 }, { value: 9 }],
+    ];
+    const decode = createDecoder(V.array(V.array({ value: V.number() })));
+    expect(() => decode(data as any)).to.throw(
+      `Expected number but got ${formatToJson(data[1][2].value)} at [1][2].value`,
+    );
+    done();
+  });
 });
