@@ -6,6 +6,8 @@ type _toNativeType<T> = T extends Validator<infer R>
   : {
       [key in keyof T]: _toNativeType<T[key]>;
     };
-export type toNativeType<T> = T extends Validator<infer R>
+export type toNativeType<T> = T extends [...Validator<any>[]]
+  ? { [L in keyof T]: toNativeType<T[L]> }
+  : T extends Validator<infer R>
   ? R
   : Id<OptionalUndefined<_toNativeType<T>>>;
