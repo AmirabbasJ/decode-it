@@ -1,4 +1,5 @@
 import type { FailedDecode } from './decode';
+import { isFunction } from './typeCheckers';
 
 export const formatToJson = (v: unknown) => JSON.stringify(v, null, 1);
 
@@ -15,10 +16,8 @@ export const formatFailedDecode = ({
 
   if (wrapper === 'array' && expectedType === 'none')
     return `Expected empty array but got ${formattedActual} at ${path}`;
-  if (wrapper === 'array') {
-    return expectedType === 'unknown'
-      ? `Expected array but got ${formattedActual} at ${path}`
-      : `Expected array of ${expectedType} but got ${formattedActual} at ${path}`;
+  if (wrapper === 'array' && expectedType === 'unknown') {
+    return `Expected array but got ${formattedActual} at ${path}`;
   }
   if (wrapper === 'union' && expectedType === 'unknown')
     return (
@@ -29,7 +28,7 @@ export const formatFailedDecode = ({
       '  field: V.union(V.string(), V.number()) // string or number\n' +
       '}'
     );
-  if (wrapper === 'tuple' && expectedType === 'unknown')
+  if (wrapper === 'tuple' && expectedType === 'validator')
     return (
       'Expected tuples to have at least one validators\n' +
       'hint: you passed V.tuples with no validators\n' +
@@ -38,6 +37,8 @@ export const formatFailedDecode = ({
       '  field: V.tuples(V.string(), V.number()) // [string, number]\n' +
       '}'
     );
+  if (wrapper === 'tuple' && expectedType === 'none')
+    return `Expected tuple but got ${formattedActual} at ${path}`;
   if (wrapper === 'union')
     return `Expected union to match one of specified types but none matched for value ${formattedActual} at ${path}`;
   if (wrapper === 'optional' && expectedType === 'object')
@@ -66,6 +67,12 @@ export const formatFailedDecode = ({
       `  field: V.string()\n` +
       `}\n` +
       `so as a rule of thumb: "you are always calling the validator"`
+    );
+  if (isFunction(expectedValue) && expectedType === 'literal')
+    return (
+      `Expected non function literal but got one at ${path}\n` +
+      `hint: you probably passed a validator (or just a function) to a literal validator\n` +
+      `and since a json doesn't have function in their field this is not possible`
     );
   return `Expected ${
     formattedExpectedValue ?? expectedType
