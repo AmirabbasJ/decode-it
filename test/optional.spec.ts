@@ -82,4 +82,35 @@ describe('json decoder for optionals', () => {
     );
     done();
   });
+  it('should pass when given nested optional with same type', done => {
+    const data = {
+      email: 'shit@wow.com',
+    };
+    const decode = createDecoder({
+      email: V.string(),
+      username: V.optional(
+        V.optional(V.optional({ name: V.nil(), isVerified: V.boolean() })),
+      ),
+    });
+    expect(decode(data)).to.be.eq(data);
+    done();
+  });
+  it('should fail when given nested optional with different type', done => {
+    const data = {
+      email: 'shit@wow.com',
+      username: { name: 'boi', isVerified: true },
+    };
+    const decode = createDecoder({
+      email: V.string(),
+      username: V.optional(
+        V.optional(V.optional({ name: V.nil(), isVerified: V.boolean() })),
+      ),
+    });
+    expect(() => decode(data as any)).to.throw(
+      `Expected undefined or specified schema but got ${formatToJson(
+        data.username.name,
+      )} at username`,
+    );
+    done();
+  });
 });

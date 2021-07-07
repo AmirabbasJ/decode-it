@@ -117,4 +117,35 @@ describe('json decoder for unions', () => {
     );
     done();
   });
+
+  it('should pass when given nested union with one matching type', done => {
+    const data = {
+      wtfCanThisBe: 'a string of course',
+    };
+    const decode = createDecoder({
+      wtfCanThisBe: V.union(
+        V.union(V.nil(), V.number()),
+        V.union(V.string(), V.boolean()),
+      ),
+    });
+    expect(decode(data)).be.eq(data);
+    done();
+  });
+  it('should fail when given nested union with no matching type', done => {
+    const data = {
+      wtfCanThisBe: 'a string of course',
+    };
+    const decode = createDecoder({
+      wtfCanThisBe: V.union(
+        V.union(V.nil(), V.literal('not a string of course')),
+        V.union(V.number(), V.boolean()),
+      ),
+    });
+    expect(() => decode(data as any)).be.throw(
+      `Expected union to match one of specified types but none matched for value ${formatToJson(
+        data.wtfCanThisBe,
+      )} at wtfCanThisBe`,
+    );
+    done();
+  });
 });

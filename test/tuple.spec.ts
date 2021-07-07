@@ -2,6 +2,7 @@ import { expect } from 'chai';
 
 import { createDecoder } from '../src/decode';
 import { formatToJson } from '../src/errorFormatter';
+import { toNativeType } from '../src/toNativeType';
 import * as V from '../src/validators';
 
 describe('json decoder for tuples', () => {
@@ -18,11 +19,11 @@ describe('json decoder for tuples', () => {
     );
     done();
   });
-  it('should fail when given non array for tuple', done => {
+  it('should fail when given non tuple for tuple', done => {
     const data = { tick: { from: '10/2/1991', ms: 1000 } };
     const decode = createDecoder({ tick: V.tuple(V.string(), V.number()) });
     expect(() => decode(data as any)).to.be.throw(
-      `Expected array but got ${formatToJson(data.tick)} at tick`,
+      `Expected tuple but got ${formatToJson(data.tick)} at tick`,
     );
     done();
   });
@@ -83,6 +84,52 @@ describe('json decoder for tuples', () => {
       `Expected number but got ${formatToJson(
         data.tick[1]?.ms?.[1],
       )} at tick[1].ms[1]`,
+    );
+    done();
+  });
+
+  it('should pass when given nested tuple with same type', done => {
+    const schema = {
+      tick: V.tuple(
+        V.tuple(V.tuple(V.number(), V.number()), V.tuple(V.number(), V.number())),
+        V.tuple(V.tuple(V.number(), V.number()), V.tuple(V.number(), V.number())),
+      ),
+    };
+    const data: toNativeType<typeof schema> = {
+      tick: [
+        [
+          [1, 2],
+          [3, 4],
+        ],
+        [
+          [5, 6],
+          [7, 8],
+        ],
+      ],
+    };
+    const decode = createDecoder(schema);
+    expect(decode(data)).to.be.eq(data);
+    done();
+  });
+  it('should fail when given nested tuple with different type', done => {
+    const schema = {
+      tick: V.tuple(
+        V.tuple(V.tuple(V.number(), V.number()), V.tuple(V.number(), V.number())),
+        V.tuple(V.tuple(V.number(), V.number()), V.tuple(V.number(), V.number())),
+      ),
+    };
+    const data = {
+      tick: [
+        [1, 2, [3, 4]],
+        [
+          [5, 6],
+          [7, 8],
+        ],
+      ],
+    };
+    const decode = createDecoder(schema);
+    expect(() => decode(data as any)).to.throw(
+      `Expected tuple but got ${data.tick[0][0]} at tick[0][0]`,
     );
     done();
   });

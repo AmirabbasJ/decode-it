@@ -59,4 +59,17 @@ describe('json decoder for literals', () => {
     );
     done();
   });
+
+  it('should fail when given nested literal with same value as parameter', done => {
+    const data = { email: 'shit@wow.com' };
+    const decode = createDecoder({
+      email: V.literal(V.literal(V.literal('shit@wow.com'))),
+    });
+    expect(() => decode(data as any)).to.be.throw(
+      `Expected non function literal but got one at email\n` +
+        `hint: you probably passed a validator (or just a function) to a literal validator\n` +
+        `and since a json doesn't have function in their field this is not possible`,
+    );
+    done();
+  });
 });
