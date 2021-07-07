@@ -1,3 +1,4 @@
+import { constructNestedErrorPath } from './constructErrorPath';
 import { formatFailedDecode } from './errorFormatter';
 import type { toNativeType } from './toNativeType';
 import { isFunction, isObject, isUndefined } from './typeCheckers';
@@ -68,7 +69,7 @@ export const getFailedDecodes = <T extends Schema<any>, J extends toNativeType<T
         expectedType: result.type,
         expectedValue: result.literal,
         wrapper: result.wrapper,
-        path: result.path ? `${key}${result.path}` : key,
+        path: constructNestedErrorPath(key, result.path),
       });
 
     return errors;

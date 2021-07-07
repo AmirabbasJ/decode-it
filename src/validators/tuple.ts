@@ -1,12 +1,40 @@
-import { getFailedDecodes, Schema } from '../decode';
+import { constructNestedErrorPath } from '../constructErrorPath';
+import { FailedDecode, getFailedDecodes, Schema } from '../decode';
 import { toNativeType } from '../toNativeType';
 import { isArray, isEmptyArray, isObject } from '../typeCheckers';
 import {
   FailedValidation,
+  FailedValidationConstructor,
+  isFailedValidation,
+  isPassedValidation,
   passedValidation,
   ValidationResult,
 } from './ValidationResult';
 import { Validator } from './Validator';
+
+const createEmptyTupleValidatorFailure: FailedValidationConstructor = arg => ({
+  value: arg,
+  type: 'validator',
+  state: 'failed',
+  wrapper: 'tuple',
+});
+const createEmptyTupleFailure: FailedValidationConstructor = arg => ({
+  value: arg,
+  type: 'none',
+  state: 'failed',
+  wrapper: 'tuple',
+});
+
+export const failedDecodeToFailedValidation = (
+  failedDecode: FailedDecode,
+): FailedValidation => ({
+  value: failedDecode.actual,
+  type: failedDecode.expectedType,
+  literal: failedDecode.expectedValue,
+  path: failedDecode.path,
+  wrapper: failedDecode.wrapper,
+  state: 'failed',
+});
 
 type tuple = <T extends (Schema<any> | Validator<any>)[]>(
   ...itemValidators: T
@@ -14,61 +42,40 @@ type tuple = <T extends (Schema<any> | Validator<any>)[]>(
 export const tuple: tuple =
   (...itemValidators) =>
   arg => {
-    if (isEmptyArray(itemValidators))
-      return {
-        value: arg,
-        type: 'unknown',
-        state: 'failed',
-        wrapper: 'tuple',
-      };
-    if (!isArray(arg))
-      return {
-        value: arg,
-        type: 'unknown',
-        state: 'failed',
-        wrapper: 'array',
-      };
-    const validationResults: ValidationResult[] = arg.map((item, index) => {
-      const validate = itemValidators[index];
-      if (isObject(validate)) {
-        const [itemFailedDecode] = getFailedDecodes(
-          validate,
-          item as Record<string, unknown>,
-        );
-        return itemFailedDecode == null
-          ? passedValidation
-          : {
-              ...itemFailedDecode,
-              value: itemFailedDecode.actual,
-              type: itemFailedDecode.expectedType,
-              state: 'failed',
-            };
-      }
-
-      return validate(item);
-    });
-    const allValidationsPassed = validationResults.every(v => v.state === 'passed');
+    if (isEmptyArray(itemValidators)) return createEmptyTupleValidatorFailure(arg);
+    if (!isArray(arg)) return createEmptyTupleFailure(arg);
+    const validationResults: ValidationResult[] = itemValidators.map(
+      (validate, index) => {
+        const item = arg[index];
+        if (isObject(validate)) {
+          const [failedDecode] = getFailedDecodes(validate, item as any);
+          return failedDecode == null
+            ? passedValidation
+            : failedDecodeToFailedValidation(failedDecode);
+        }
+        return validate(item);
+      },
+    );
+    const allValidationsPassed = validationResults.every(isPassedValidation);
     if (allValidationsPassed) return passedValidation;
 
-    const [failedDecode] = validationResults.reduce(
-      (failedDecodes: FailedValidation[], validationRes, index) => {
-        const currentPath = `[${index}]`;
-        if (validationRes.state === 'failed') {
-          const innerPath = validationRes?.path;
-          return failedDecodes.concat({
-            ...validationRes,
-            path: innerPath != null ? `${currentPath}.${innerPath}` : currentPath,
-          });
-        }
-        return failedDecodes;
-      },
-      [],
-    );
+    const [failedValidation] = validationResults
+      .map((validationRes, index) =>
+        isFailedValidation(validationRes)
+          ? {
+              ...validationRes,
+              path: constructNestedErrorPath(index, validationRes.path),
+            }
+          : validationRes,
+      )
+      .filter(isFailedValidation) as FailedValidation[];
+    console.log(failedValidation);
+
     return {
-      value: failedDecode.value,
-      type: failedDecode.type,
-      path: failedDecode.path,
+      value: failedValidation.value,
+      type: failedValidation.type,
+      path: failedValidation.path,
       state: 'failed',
-      wrapper: 'tuple',
+      wrapper: failedValidation.wrapper == null ? undefined : 'tuple',
     };
   };
