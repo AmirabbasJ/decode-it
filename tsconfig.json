@@ -22,6 +22,5 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {}
-  },
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+  }
 }
