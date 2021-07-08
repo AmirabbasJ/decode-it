@@ -47,7 +47,7 @@ export const array: array = validator => {
       const areAllItemsObject = arg.every(item => isObject(item));
       if (!areAllItemsObject) return createNonInnerObjectArrayFailure(arg);
       const failedValidations = arg
-        .map(item => getFailedDecodes(validator, item as Record<string, unknown>))
+        .map(item => getFailedDecodes(validator, item as any))
         .map(([failedDecode], index) => {
           if (failedDecode == null) return passedValidation;
           const failedValidation = failedDecodeToFailedValidation(failedDecode);
