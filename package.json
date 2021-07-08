@@ -1,5 +1,5 @@
 {
-  "name": "tcode",
+  "name": "decode-it",
   "version": "0.0.0",
   "description": "a simple zero-dependency type safe json decoder for typescript",
   "keywords": [
@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/AmirabbasJ/tcode.git"
+    "url": "https://github.com/AmirabbasJ/decode-it.git"
   },
   "engines": {
     "node": "14.x"
