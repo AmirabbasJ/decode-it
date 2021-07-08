@@ -5,5 +5,5 @@
     "declaration": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["test/**/*", "node_modules", "dist"]
+  "exclude": ["test/", "node_modules/", "dist/", "brainStorms/"]
 }
