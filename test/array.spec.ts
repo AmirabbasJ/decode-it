@@ -6,17 +6,16 @@ import * as V from '../src/validators';
 
 // eslint-disable-next-line max-lines-per-function
 describe('json decoder for arrays', () => {
-  it('should pass when given an empty array and expecting it to be so', done => {
+  it('should fail when given array validator no validators', done => {
     const data = { toys: [] };
-    const decode = createDecoder({ toys: V.array() });
-    expect(decode(data)).to.be.eq(data);
-    done();
-  });
-  it('should fail when given non empty array and expecting an empty array', done => {
-    const data = { toys: ['car', 'teddyBear', 'nuclearBomb'] };
-    const decode = createDecoder({ toys: V.array() });
-    expect(() => decode(data as any)).to.throw(
-      `Expected empty array but got ${formatToJson(data.toys)} at toys`,
+    const decode = createDecoder({ toys: V.array.apply(null, [] as any) });
+    expect(() => decode(data)).to.be.throw(
+      'Expected array to have one validator but got none\n' +
+        'hint: you passed V.array with no validator\n' +
+        'you should pass one validator e.g:\n' +
+        '{\n' +
+        '  field: V.array(V.string()) // array of strings\n' +
+        '}',
     );
     done();
   });
