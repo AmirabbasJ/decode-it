@@ -1,6 +1,6 @@
 {
   "name": "tcode",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "a simple zero-dependency type safe json decoder for typescript",
   "keywords": [
     "json-decoder",
