@@ -26,6 +26,7 @@ const createNestedOptionalFailure = (
   failedInnerDecode: FailedDecode,
 ): FailedValidation => ({
   value: failedInnerDecode.actual,
+  path: failedInnerDecode.path,
   type: 'object',
   state: 'failed',
   wrapper: 'optional',
