@@ -44,8 +44,10 @@ export const formatFailedDecode = ({
       '  field: V.tuples(V.string(), V.number()) // [string, number]\n' +
       '}'
     );
-  if (wrapper === 'tuple' && expectedType === 'none')
+  if (wrapper === 'tuple' && expectedType === 'unknown')
     return `Expected tuple but got ${formattedActual} at ${path}`;
+  if (wrapper === 'tuple' && expectedType === 'none')
+    return `Expected tuple of equal length but got ${formattedActual} at ${path}`;
   if (wrapper === 'union')
     return `Expected union to match one of specified types but none matched for value ${formattedActual} at ${path}`;
   if (wrapper === 'optional' && expectedType === 'object')

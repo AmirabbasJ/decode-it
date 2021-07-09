@@ -18,9 +18,9 @@ const createEmptyTupleValidatorFailure: FailedValidationConstructor = arg => ({
   state: 'failed',
   wrapper: 'tuple',
 });
-const createEmptyTupleFailure: FailedValidationConstructor = arg => ({
+const createNonTupleFailure: FailedValidationConstructor = arg => ({
   value: arg,
-  type: 'none',
+  type: 'unknown',
   state: 'failed',
   wrapper: 'tuple',
 });
@@ -36,6 +36,13 @@ export const failedDecodeToFailedValidation = (
   state: 'failed',
 });
 
+const createExtraTupleItemFailure: FailedValidationConstructor = arg => ({
+  value: arg,
+  type: 'none',
+  state: 'failed',
+  wrapper: 'tuple',
+});
+
 type tuple = <T extends (Schema<any> | Validator<any>)[]>(
   ...itemValidators: T
 ) => Validator<toNativeType<T>>;
@@ -43,7 +50,14 @@ export const tuple: tuple =
   (...itemValidators) =>
   arg => {
     if (isEmptyArray(itemValidators)) return createEmptyTupleValidatorFailure(arg);
-    if (!isArray(arg)) return createEmptyTupleFailure(arg);
+    if (!isArray(arg)) return createNonTupleFailure(arg);
+    console.log(
+      arg.length > itemValidators.length,
+      arg.length,
+      itemValidators.length,
+    );
+
+    if (arg.length > itemValidators.length) return createExtraTupleItemFailure(arg);
     const validationResults: ValidationResult[] = itemValidators.map(
       (validate, index) => {
         const item = arg[index];

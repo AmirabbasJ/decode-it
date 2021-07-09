@@ -129,7 +129,9 @@ describe('json decoder for tuples', () => {
     };
     const decode = createDecoder(schema);
     expect(() => decode(data as any)).to.throw(
-      `Expected tuple but got ${data.tick[0][0]} at tick[0][0]`,
+      `Expected tuple of equal length but got ${formatToJson(
+        data.tick[0],
+      )} at tick[0]`,
     );
     done();
   });
