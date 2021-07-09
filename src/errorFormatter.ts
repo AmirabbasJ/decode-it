@@ -15,7 +15,14 @@ export const formatFailedDecode = ({
   const formattedExpectedValue = formatToJson(expectedValue);
 
   if (wrapper === 'array' && expectedType === 'none')
-    return `Expected empty array but got ${formattedActual} at ${path}`;
+    return (
+      'Expected array to have one validator but got none\n' +
+      'hint: you passed V.array with no validator\n' +
+      'you should pass one validator e.g:\n' +
+      '{\n' +
+      '  field: V.array(V.string()) // array of strings\n' +
+      '}'
+    );
   if (wrapper === 'array' && expectedType === 'unknown') {
     return `Expected array but got ${formattedActual} at ${path}`;
   }

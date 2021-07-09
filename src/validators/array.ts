@@ -12,8 +12,10 @@ import {
 import { Validator } from './Validator';
 
 type array = <T extends Schema<any> | Validator<any>>(
-  validator?: T,
-) => Validator<toNativeType<T>[]>;
+  validator: T,
+) => undefined extends Validator<toNativeType<T>[]>
+  ? Validator<[]>
+  : Validator<toNativeType<T>[]>;
 
 const createNonArrayFailure: FailedValidationConstructor = arg => ({
   value: arg,
@@ -40,8 +42,7 @@ export const array: array = validator => {
   return (arg: unknown) => {
     if (!isArray(arg)) return createNonArrayFailure(arg);
 
-    if (validator == null)
-      return isEmptyArray(arg) ? passedValidation : createEmptyArrayFailure(arg);
+    if (validator == null) return createEmptyArrayFailure(arg);
 
     if (isObject(validator)) {
       const areAllItemsObject = arg.every(item => isObject(item));
