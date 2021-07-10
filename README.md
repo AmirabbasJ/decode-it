@@ -16,10 +16,11 @@ from a json file or fetching json data (yes, the everyday work you do)
 You specify an schema (or you might call it an interface) And it will throw as soon
 as it finds out that the schema doesn't match the received json
 
-Why do I need this? I use typescript, I can already do that without this with the
-magic of interface Well... Not exactly, you might think doing something that will
-result in the same functionally as what json decoder is trying to do, but no, let me
-demonstrate it for you
+# Why do I need this? I use typescript, I can already do that without this with the magic of interfaces
+
+Well... Not exactly, you might **think** doing something that will result in the same
+functionally as what json decoder is trying to do, but no, let me demonstrate it for
+you
 
 ```typescript
 interface Data {
@@ -86,7 +87,7 @@ a validator is function which is called on a field and asserts that the type mat
 the validator there are two types of validators one which take no input, you can call
 them primitive validator for now which include:
 
-V.string: a validator which asserts this value is of type string
+### V.string: a validator which asserts this value is of type string
 
 ```typescript
 import { V } from 'decode-it';
@@ -97,7 +98,7 @@ const schema = {
 };
 ```
 
-V.number: a validator which asserts this value is of type number
+### V.number: a validator which asserts this value is of type number
 
 ```typescript
 import { V } from 'decode-it';
@@ -108,7 +109,7 @@ const schema = {
 };
 ```
 
-V.boolean: a validator which asserts this value is of type boolean
+### V.boolean: a validator which asserts this value is of type boolean
 
 ```typescript
 import { V } from 'decode-it';
@@ -119,7 +120,7 @@ const schema = {
 };
 ```
 
-V.nil: a validator which asserts this value is of type null
+### V.nil: a validator which asserts this value is of type null
 
 ```typescript
 import { V } from 'decode-it';
@@ -133,7 +134,8 @@ const schema = {
 the second group take (or can take) an input or more, you can call them custom
 validators:
 
-V.literal: a validator which takes any value and asserts that the input is exactly
+### V.literal: a validator which takes any value and asserts that the input is exactly
+
 equal as this value (note: a deep comparison is done here) e.g:
 
 ```typescript
@@ -145,7 +147,8 @@ const schema = {
 };
 ```
 
-V.array: a validator which takes another validator and asserts all validators pass
+### V.array: a validator which takes another validator and asserts all validators pass
+
 for each element of this array value e.g:
 
 ```typescript
@@ -158,7 +161,8 @@ const schema = {
 };
 ```
 
-V.union: a validator which takes any number of validators (starting from two) and
+### V.union: a validator which takes any number of validators (starting from two) and
+
 asserts if this value passes any of the given validators (note: this validator
 doesn't support scheme (object) types as validators and it's better to avoid using
 this validator as much as you can because this type is rarely useful when it comes to
@@ -176,7 +180,8 @@ const schema = {
 };
 ```
 
-V.optional: a validator which takes one validator and asserts this value can be
+### V.optional: a validator which takes one validator and asserts this value can be
+
 undefined or it should pass the validator
 
 ```typescript
@@ -191,7 +196,8 @@ const schema = {
 };
 ```
 
-V.tuple: a validator which takes any number of validators and asserts if the given
+### V.tuple: a validator which takes any number of validators and asserts if the given
+
 value is tuple of given validators
 
 ```typescript
