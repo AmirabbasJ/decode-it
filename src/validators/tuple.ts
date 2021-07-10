@@ -51,11 +51,6 @@ export const tuple: tuple =
   arg => {
     if (isEmptyArray(itemValidators)) return createEmptyTupleValidatorFailure(arg);
     if (!isArray(arg)) return createNonTupleFailure(arg);
-    console.log(
-      arg.length > itemValidators.length,
-      arg.length,
-      itemValidators.length,
-    );
 
     if (arg.length > itemValidators.length) return createExtraTupleItemFailure(arg);
     const validationResults: ValidationResult[] = itemValidators.map(
@@ -83,7 +78,6 @@ export const tuple: tuple =
           : validationRes,
       )
       .filter(isFailedValidation) as FailedValidation[];
-    console.log(failedValidation);
 
     return {
       value: failedValidation.value,
