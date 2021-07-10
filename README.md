@@ -134,9 +134,7 @@ const schema = {
 the second group take (or can take) an input or more, you can call them custom
 validators:
 
-### V.literal: a validator which takes any value and asserts that the input is exactly
-
-equal as this value (note: a deep comparison is done here) e.g:
+### V.literal: a validator which takes any value and asserts that the input is exactly equal as this value (note: a deep comparison is done here) e.g:
 
 ```typescript
 import { V } from 'decode-it';
@@ -147,9 +145,7 @@ const schema = {
 };
 ```
 
-### V.array: a validator which takes another validator and asserts all validators pass
-
-for each element of this array value e.g:
+### V.array: a validator which takes another validator and asserts all validators pass for each element of this array value e.g:
 
 ```typescript
 import { V } from 'decode-it';
@@ -161,12 +157,11 @@ const schema = {
 };
 ```
 
-### V.union: a validator which takes any number of validators (starting from two) and
+### V.union: a validator which takes any number of validators (starting from two) and asserts if this value passes any of the given validators
 
-asserts if this value passes any of the given validators (note: this validator
-doesn't support scheme (object) types as validators and it's better to avoid using
-this validator as much as you can because this type is rarely useful when it comes to
-jsons) e.g:
+(note: this validator doesn't support scheme (object) types as validators and it's
+better to avoid using this validator as much as you can because this type is rarely
+useful when it comes to jsons) e.g:
 
 ```typescript
 import { V } from 'decode-it';
@@ -180,9 +175,7 @@ const schema = {
 };
 ```
 
-### V.optional: a validator which takes one validator and asserts this value can be
-
-undefined or it should pass the validator
+### V.optional: a validator which takes one validator and asserts this value can be undefined or it should pass the validator
 
 ```typescript
 import { V } from 'decode-it';
@@ -196,9 +189,7 @@ const schema = {
 };
 ```
 
-### V.tuple: a validator which takes any number of validators and asserts if the given
-
-value is tuple of given validators
+### V.tuple: a validator which takes any number of validators and asserts if the given value is tuple of given validators
 
 ```typescript
 import { V } from 'decode-it';
