@@ -1,11 +1,10 @@
-import { F } from 'ts-toolbelt';
-
+import { Narrow } from '../helperTypes';
 import { deepEq } from '../utils';
 import { passedValidation } from './ValidationResult';
 import { Validator } from './Validator';
 
 export const literal =
-  <T>(val: F.Narrow<T>): Validator<T> =>
+  <T>(val: Narrow<T>): Validator<T> =>
   (arg: unknown) =>
     deepEq(val, arg)
       ? passedValidation
