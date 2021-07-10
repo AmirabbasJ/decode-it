@@ -92,8 +92,8 @@ V.string: a validator which asserts this value is of type string
 import { V } from 'decode-it';
 
 const schema = {
-  firstName: V.string(),
-  lastName: V.string(),
+  firstName: V.string(), //🟢 "Ali" 🔴 null
+  lastName: V.string(), // 🟢 "string" 🔴 true
 };
 ```
 
@@ -103,8 +103,8 @@ V.number: a validator which asserts this value is of type number
 import { V } from 'decode-it';
 
 const schema = {
-  age: V.number(),
-  weight: V.number(),
+  age: V.number(), //🟢 17 🔴 "17"
+  weight: V.number(), // 🟢 63 🔴 { kg: 63 }
 };
 ```
 
@@ -114,8 +114,8 @@ V.boolean: a validator which asserts this value is of type boolean
 import { V } from 'decode-it';
 
 const schema = {
-  isAdult: V.boolean(),
-  isMale: V.boolean(),
+  isAdult: V.boolean(), //🟢 false 🔴 "yes"
+  isMale: V.boolean(), // 🟢 true 🔴 ["prefer not to say"]
 };
 ```
 
@@ -125,8 +125,8 @@ V.nil: a validator which asserts this value is of type null
 import { V } from 'decode-it';
 
 const schema = {
-  yeahNullSucks: V.nil(),
-  nilIsTheSameAsNull: V.nil(),
+  yeahNullSucks: V.nil(), //🟢 null 🔴 "no null is the best"
+  nilIsTheSameAsNull: V.nil(), // 🟢 null 🔴 undefined
 };
 ```
 
