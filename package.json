@@ -15,10 +15,7 @@
   "files": [
     "dist/**/*"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AmirabbasJ/decode-it.git"
-  },
+  "repository": "git:https://github.com/AmirabbasJ/decode-it.git",
   "engines": {
     "node": "14.x"
   },
@@ -26,9 +23,6 @@
     "test": "mocha -t 10000 -A -r ts-node/register test/**/*.spec.ts",
     "build": "tsc --p tsconfig.build.json",
     "prepare": "husky install && npm run build"
-  },
-  "publishConfig": {
-  "registry":"https://npm.pkg.github.com"
   },
   "author": "AmirabbasJ",
   "license": "MIT",
