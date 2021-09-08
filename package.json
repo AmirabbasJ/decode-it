@@ -1,6 +1,6 @@
 {
   "name": "decode-it",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "description": "a simple zero-dependency type safe json decoder for typescript",
   "keywords": [
     "json-decoder",
@@ -18,6 +18,9 @@
   "repository": "git:https://github.com/AmirabbasJ/decode-it.git",
   "engines": {
     "node": "14.x"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   },
   "scripts": {
     "test": "mocha -t 10000 -A -r ts-node/register test/**/*.spec.ts",
