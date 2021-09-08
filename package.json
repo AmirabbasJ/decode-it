@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/AmirabbasJ/decode-it.git"
+    "url": "git+https://github.com/AmirabbasJ/decode-it.git"
   },
   "engines": {
     "node": "14.x"
