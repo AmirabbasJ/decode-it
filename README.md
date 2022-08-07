@@ -13,7 +13,14 @@ from a json file or fetching json data (yes, the everyday work you do)
 
 # How can I use it?
 
-You specify an schema (or you might call it an interface) And it will throw as soon
+first you should install this package 
+you can do so by:
+
+```bash
+$ npm install decode-it
+```
+
+Then you specify a schema (or you might call it an interface) And it will throw as soon
 as it finds out that the schema doesn't match the received json
 
 # Why do I need this? I use typescript, I can already do that without this with the magic of interfaces
