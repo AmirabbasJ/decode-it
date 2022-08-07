@@ -20,7 +20,7 @@
     "node": "14.x"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "@amirabbas_j:registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "test": "mocha -t 10000 -A -r ts-node/register test/**/*.spec.ts",
